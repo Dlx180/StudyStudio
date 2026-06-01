@@ -1,0 +1,17 @@
+# Python
+__pycache__/
+.pytest_cache/
+.venv/
+*.py[cod]
+
+# Node
+node_modules/
+.next/
+out/
+npm-debug.log*
+
+# Local runtime data
+.env
+.env.*
+!.env.example
+storage/

@@ -96,6 +96,11 @@ New features should not break this flow.
 
 ### Added
 
+- Added the initial monorepo skeleton with `apps/web`, `apps/api`, `packages/shared`, `prompts`, `tests`, and `scripts`.
+- Added a FastAPI API shell with health and mock workspace endpoints.
+- Added a Next.js mock reading workspace that demonstrates the left original-material pane and right UnitTree pane.
+- Added `local_step.md` to track small local development steps before cloud-side documentation updates.
+
 - Added `docs/proposals/README.md` to define the proposal process, proposal template, lifecycle, and Codex usage guidance.
 - Added this changelog to record project changes and document change-management principles.
 

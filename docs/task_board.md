@@ -15,13 +15,13 @@ Goal: create a clean repository that supports later expansion.
 
 ### Tasks
 
-- [ ] Create monorepo or agreed project structure.
-- [ ] Create frontend app shell.
-- [ ] Create backend API shell.
+- [x] Create monorepo or agreed project structure.
+- [x] Create frontend app shell.
+- [x] Create backend API shell.
 - [ ] Configure linting/formatting.
-- [ ] Configure basic test runners.
-- [ ] Add environment configuration pattern.
-- [ ] Add placeholder prompt directory.
+- [x] Configure basic test runners.
+- [x] Add environment configuration pattern.
+- [x] Add placeholder prompt directory.
 - [ ] Add database migration tool.
 
 ### Acceptance Criteria
@@ -36,12 +36,12 @@ Goal: prove left-reader/right-tree interaction with mock data.
 
 ### Tasks
 
-- [ ] Implement workspace page layout.
-- [ ] Implement left document viewer placeholder.
-- [ ] Implement right UnitTree pane with mock data.
-- [ ] Implement click unit -> jump to page using mock page navigation.
-- [ ] Implement current page -> active unit highlight.
-- [ ] Implement responsive layout baseline.
+- [x] Implement workspace page layout.
+- [x] Implement left document viewer placeholder.
+- [x] Implement right UnitTree pane with mock data.
+- [x] Implement click unit -> jump to page using mock page navigation.
+- [x] Implement current page -> active unit highlight.
+- [x] Implement responsive layout baseline.
 
 ### Acceptance Criteria
 
