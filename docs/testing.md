@@ -196,23 +196,42 @@ Whenever schema changes:
 
 ## 7. Suggested Commands
 
-These commands are placeholders and should be updated after the actual stack is implemented.
+Use these commands for the current skeleton. Frontend and end-to-end commands will be expanded after dependencies and test tools are installed.
 
 ```bash
 # backend tests
 cd apps/api
 pytest
 
-# frontend tests
-cd apps/web
-npm test
+# frontend development
+npm --workspace @knowtree/web run dev
 
-# e2e tests
-npm run test:e2e
+# frontend production build
+npm --workspace @knowtree/web run build
 
-# lint/format
-npm run lint
-npm run format
+# repository API test shortcut
+npm run api:test
+```
+
+### 7.1 npm troubleshooting in cloud environments
+
+If npm prints `Unknown env config "http-proxy"`, check whether the environment sets `npm_config_http_proxy` or `npm_config_https_proxy`. Those variables can be unset for a single command:
+
+```bash
+env -u npm_config_http_proxy -u npm_config_https_proxy npm install
+```
+
+If npm returns `403 Forbidden` from a registry, the package registry is blocked by the current network/proxy policy. A maintainer can help by providing one of the following:
+
+- a reachable npm registry or mirror;
+- a valid `.npmrc` with the required registry/auth configuration;
+- a committed lockfile generated in an environment with registry access;
+- or a CI/development environment where `npm install` can reach the configured registry.
+
+After dependencies are installed, rerun:
+
+```bash
+npm --workspace @knowtree/web run build
 ```
 
 ## 8. Definition of Done for MVP
