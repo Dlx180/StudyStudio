@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import type { EvidenceEvent, InteractionTask, ReadingUnit, UploadedResource } from "@knowtree/shared";
+import type { EvidenceEvent, InteractionTask, ReadingUnit, ResourceRef, SourceSpan, UploadedResource } from "@knowtree/shared";
 import { API_BASE_URL, conceptItems, SAMPLE_SELECTION, units } from "./workspace/data";
 import { PdfReaderPane } from "./workspace/pdf-reader-pane";
 import { RightDock } from "./workspace/right-dock";
@@ -61,6 +61,16 @@ export function MockWorkspace() {
     setCurrentPage(Math.min(maxPage, Math.max(1, unit.startPage)));
   }
 
+  function activeResourceRef(): ResourceRef | null {
+    if (!resource) return null;
+
+    return {
+      resource_id: resource.resource_id,
+      title: resource.title,
+      kind: resource.kind,
+    };
+  }
+
   function dropConcept(conceptId: string, parentId: string | null) {
     const concept = conceptItems.find((item) => item.id === conceptId);
     if (!concept || usedConceptIds.has(concept.id)) return;
@@ -96,6 +106,7 @@ export function MockWorkspace() {
           page: currentPage,
           resource_id: resource?.resource_id ?? null,
           selection_context: selectionContext,
+          source_refs: selectionContext?.source_span ? [selectionContext.source_span] : [],
           visual_node_count: visualNodeCount,
           visual_root_count: visualRootCount,
         },
@@ -109,6 +120,7 @@ export function MockWorkspace() {
         unit_title: activeUnit.title,
         summary: evidence.note,
         selection_context: selectionContext,
+        source_refs: selectionContext?.source_span ? [selectionContext.source_span] : [],
         payload: {
           node_count: evidence.nodeCount,
           root_count: evidence.rootCount,
@@ -151,6 +163,30 @@ export function MockWorkspace() {
     setCommand("");
   }
 
+  async function persistSourceSelection(selection: SelectionContext) {
+    const selectedResource = activeResourceRef();
+    if (!selectedResource || selection.source !== "pdf-text-layer") {
+      setSelectionContext(selection);
+      return;
+    }
+
+    setSelectionContext({ ...selection, resource: selectedResource });
+
+    try {
+      const sourceSpan = await postJson<SourceSpan>("/api/source-spans", {
+        resource: selectedResource,
+        page: selection.page,
+        text: selection.text,
+        created_by: "user",
+      });
+
+      setSelectionContext({ ...selection, resource: selectedResource, source_span: sourceSpan });
+      addOutput("system", `SourceSpan saved: ${sourceSpan.source_span_id} for page ${selection.page}.`);
+    } catch (sourceSpanFailure) {
+      addOutput("system", sourceSpanFailure instanceof Error ? `SourceSpan save failed: ${sourceSpanFailure.message}` : "SourceSpan save failed.");
+    }
+  }
+
   async function uploadPdf(file: File | null) {
     if (!file) return;
 
@@ -174,6 +210,7 @@ export function MockWorkspace() {
       const uploaded = (await response.json()) as UploadedResource;
       setResource(uploaded);
       setCurrentPage(1);
+      setSelectionContext(null);
       setUploadStatus("idle");
     } catch (uploadFailure) {
       setUploadStatus("error");
@@ -197,7 +234,7 @@ export function MockWorkspace() {
         onToggleDock={() => setRightDockOpen((open) => !open)}
         onUploadPdf={(file) => void uploadPdf(file)}
         onCaptureSelection={() => setSelectionContext({ text: SAMPLE_SELECTION, page: currentPage, source: "sample" })}
-        onTextSelection={setSelectionContext}
+        onTextSelection={(selection) => void persistSourceSelection(selection)}
         onPageStep={stepPage}
       />
 
