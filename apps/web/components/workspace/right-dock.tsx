@@ -2,7 +2,7 @@ import type { ReadingUnit } from "@knowtree/shared";
 import { DockPanel } from "./dock-panel";
 import { InteractionConsole } from "./interaction-console";
 import { UnitTreePanel } from "./unit-tree-panel";
-import type { ConceptItem, ConceptTreeNode, ConsoleOutput, SelectionContext, UnitSelectHandler } from "./types";
+import type { ActiveVerificationTask, ConceptItem, ConceptTreeNode, ConsoleOutput, SelectionContext, UnitSelectHandler } from "./types";
 import { VisualWorkspace } from "./visual-workspace";
 
 export function RightDock({
@@ -20,6 +20,7 @@ export function RightDock({
   visualRootCount,
   outputs,
   command,
+  activeVerificationTask,
   onToggleUnitPanel,
   onToggleVisualPanel,
   onToggleConsolePanel,
@@ -32,6 +33,9 @@ export function RightDock({
   onDraftTextChange,
   onCommandChange,
   onRunCommand,
+  onCreateVerificationTask,
+  onVerificationAnswerChange,
+  onSubmitVerificationTask,
 }: {
   units: ReadingUnit[];
   activeUnit: ReadingUnit;
@@ -47,6 +51,7 @@ export function RightDock({
   visualRootCount: number;
   outputs: ConsoleOutput[];
   command: string;
+  activeVerificationTask: ActiveVerificationTask | null;
   onToggleUnitPanel: () => void;
   onToggleVisualPanel: () => void;
   onToggleConsolePanel: () => void;
@@ -59,6 +64,9 @@ export function RightDock({
   onDraftTextChange: (value: string) => void;
   onCommandChange: (value: string) => void;
   onRunCommand: () => void;
+  onCreateVerificationTask: (result: NonNullable<ConsoleOutput["result"]>) => void;
+  onVerificationAnswerChange: (answer: string) => void;
+  onSubmitVerificationTask: () => void;
 }) {
   return (
     <aside className="right-dock" aria-label="Learning workbench dock">
@@ -100,8 +108,12 @@ export function RightDock({
           visualRootCount={visualRootCount}
           outputs={outputs}
           command={command}
+          activeVerificationTask={activeVerificationTask}
           onCommandChange={onCommandChange}
           onRunCommand={onRunCommand}
+          onCreateVerificationTask={onCreateVerificationTask}
+          onVerificationAnswerChange={onVerificationAnswerChange}
+          onSubmitVerificationTask={onSubmitVerificationTask}
         />
       </DockPanel>
     </aside>

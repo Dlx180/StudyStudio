@@ -1,4 +1,10 @@
-import type { ReadingUnit, SelectionContext as SharedSelectionContext, TerminalCommandResult } from "@knowtree/shared";
+import type {
+  ReadingUnit,
+  SelectionContext as SharedSelectionContext,
+  TerminalCommandResult,
+  VerificationSubmissionDraft,
+  VerificationTaskDraft,
+} from "@knowtree/shared";
 
 export type ConceptItem = {
   id: string;
@@ -31,3 +37,8 @@ export type SelectionContext = SharedSelectionContext;
 export type SelectionAction = "explain" | "quiz" | "find-source" | "note";
 
 export type UnitSelectHandler = (unit: ReadingUnit) => void;
+
+export type ActiveVerificationTask = VerificationTaskDraft & {
+  answer: string;
+  submission?: VerificationSubmissionDraft;
+};

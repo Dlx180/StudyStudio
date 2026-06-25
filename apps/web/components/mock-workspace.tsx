@@ -1,11 +1,21 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import type { EvidenceEvent, InteractionTask, ReadingUnit, ResourceRef, SourceSpan, TerminalCommandResult, UploadedResource } from "@knowtree/shared";
+import type {
+  EvidenceEvent,
+  InteractionTask,
+  ReadingUnit,
+  ResourceRef,
+  SourceSpan,
+  TerminalCommandResult,
+  UploadedResource,
+  VerificationSubmissionDraft,
+  VerificationTaskDraft,
+} from "@knowtree/shared";
 import { API_BASE_URL, conceptItems, SAMPLE_SELECTION, units } from "./workspace/data";
 import { PdfReaderPane } from "./workspace/pdf-reader-pane";
 import { RightDock } from "./workspace/right-dock";
-import type { ConceptTreeNode, ConsoleOutput, EvidenceDraft, SelectionAction, SelectionContext } from "./workspace/types";
+import type { ActiveVerificationTask, ConceptTreeNode, ConsoleOutput, EvidenceDraft, SelectionAction, SelectionContext } from "./workspace/types";
 import { addConceptToTree, countTreeNodes, flattenConceptTree, flattenUnits, removeConceptFromTree } from "./workspace/tree-utils";
 import { WORKSPACE_FALLBACK_STYLES } from "./workspace/workspace-fallback-styles";
 
@@ -24,6 +34,7 @@ export function MockWorkspace() {
   const [draftText, setDraftText] = useState("");
   const [command, setCommand] = useState("");
   const [outputs, setOutputs] = useState<ConsoleOutput[]>([]);
+  const [activeVerificationTask, setActiveVerificationTask] = useState<ActiveVerificationTask | null>(null);
 
   const flatUnits = useMemo(() => flattenUnits(units), []);
   const activeUnit = flatUnits.find((unit) => currentPage >= unit.startPage && currentPage <= unit.endPage) ?? units[0];
@@ -40,6 +51,66 @@ export function MockWorkspace() {
 
   function addTerminalResultOutput(result: TerminalCommandResult) {
     setOutputs((current) => [{ id: result.result_id, kind: result.kind === "answer" ? "answer" : "system", text: result.message, result }, ...current]);
+  }
+
+  function createVerificationTaskFromResult(result: TerminalCommandResult) {
+    const verificationTask = result.follow_up_actions
+      .map((action) => action.payload?.verification_task)
+      .find((task): task is Omit<VerificationTaskDraft, "task_id" | "created_from_result_id" | "selected_text"> => {
+        return Boolean(task && typeof task === "object" && "prompt" in task);
+      });
+
+    if (!verificationTask) {
+      addOutput("system", "No verification task was available for this result.");
+      return;
+    }
+
+    const selectedText = typeof result.payload.selection_context === "object" && result.payload.selection_context !== null && "text" in result.payload.selection_context
+      ? String(result.payload.selection_context.text)
+      : selectionContext?.text ?? "";
+
+    const task: ActiveVerificationTask = {
+      ...verificationTask,
+      task_id: `verification-task-${Date.now()}`,
+      selected_text: selectedText,
+      created_from_result_id: result.result_id,
+      answer: "",
+    };
+
+    setActiveVerificationTask(task);
+    addOutput("quiz", `Verification task created: ${task.prompt}`);
+  }
+
+  function updateVerificationAnswer(answer: string) {
+    setActiveVerificationTask((current) => (current ? { ...current, answer } : current));
+  }
+
+  function submitVerificationTask() {
+    if (!activeVerificationTask) return;
+
+    const responseText = activeVerificationTask.answer.trim();
+    if (!responseText) {
+      addOutput("system", "Write an answer before submitting the verification task.");
+      return;
+    }
+
+    const submission: VerificationSubmissionDraft = {
+      submission_id: `verification-submission-${Date.now()}`,
+      task_id: activeVerificationTask.task_id,
+      response_text: responseText,
+      payload: {
+        prompt: activeVerificationTask.prompt,
+        response_text: responseText,
+        selected_text: activeVerificationTask.selected_text,
+        page: activeVerificationTask.page,
+        source: activeVerificationTask.source,
+        source_span_id: activeVerificationTask.source_span_id ?? null,
+        submitted_at: new Date().toISOString(),
+      },
+    };
+
+    setActiveVerificationTask({ ...activeVerificationTask, answer: responseText, submission });
+    addOutput("evidence", `Verification submission ready for EvidenceEvent: ${submission.submission_id}.`);
   }
 
   async function postJson<TResponse>(path: string, payload: Record<string, unknown>): Promise<TResponse> {
@@ -309,6 +380,7 @@ export function MockWorkspace() {
           visualRootCount={visualRootCount}
           outputs={outputs}
           command={command}
+          activeVerificationTask={activeVerificationTask}
           onToggleUnitPanel={() => setUnitPanelOpen((open) => !open)}
           onToggleVisualPanel={() => setVisualPanelOpen((open) => !open)}
           onToggleConsolePanel={() => setConsolePanelOpen((open) => !open)}
@@ -321,6 +393,9 @@ export function MockWorkspace() {
           onDraftTextChange={setDraftText}
           onCommandChange={setCommand}
           onRunCommand={runCommand}
+          onCreateVerificationTask={createVerificationTaskFromResult}
+          onVerificationAnswerChange={updateVerificationAnswer}
+          onSubmitVerificationTask={submitVerificationTask}
         />
       ) : null}
     </main>

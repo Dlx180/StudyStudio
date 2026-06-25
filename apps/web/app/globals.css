@@ -623,12 +623,75 @@ a {
   gap: 0.35rem;
 }
 
-.follow-up-actions span {
+.follow-up-actions button {
   border: 1px solid #b8d9c3;
   border-radius: 8px;
   background: #ffffff;
   color: #2f5c42;
+  cursor: pointer;
+  font-size: 0.78rem;
   padding: 0.32rem 0.45rem;
+}
+
+.verification-task-card {
+  display: grid;
+  gap: 0.55rem;
+  border: 1px solid #b8d9c3;
+  border-radius: 10px;
+  background: #f2fbf5;
+  padding: 0.7rem;
+}
+
+.verification-task-card div {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.verification-task-card small {
+  color: #3f6a4f;
+  font-size: 0.74rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.verification-task-card strong {
+  color: #172033;
+  font-size: 0.9rem;
+}
+
+.verification-task-card textarea {
+  min-height: 76px;
+  resize: vertical;
+  border: 1px solid #b8d9c3;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #172033;
+  font: inherit;
+  padding: 0.6rem;
+}
+
+.verification-task-card button {
+  justify-self: start;
+  border: 1px solid #3f7f5f;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #2f5c42;
+  cursor: pointer;
+  font-size: 0.82rem;
+  padding: 0.45rem 0.65rem;
+}
+
+.verification-task-card pre {
+  max-height: 180px;
+  overflow: auto;
+  margin: 0;
+  border: 1px solid #dbe4f0;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #35435d;
+  font-size: 0.74rem;
+  padding: 0.6rem;
+  white-space: pre-wrap;
 }
 
 .concept-workbench {

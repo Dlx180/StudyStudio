@@ -82,6 +82,13 @@ export const WORKSPACE_FALLBACK_STYLES = `
   .terminal-result-card li, .terminal-result-card p { margin: 0; color: #35435d; font-size: .84rem; }
   .follow-up-task { display: grid; gap: .2rem; border-left: 3px solid #3f7f5f; background: #f2fbf5; padding: .45rem .55rem; }
   .follow-up-actions { display: flex; flex-wrap: wrap; gap: .35rem; }
-  .follow-up-actions span { border: 1px solid #b8d9c3; border-radius: 8px; background: #fff; color: #2f5c42; padding: .32rem .45rem; }
+  .follow-up-actions button { border: 1px solid #b8d9c3; border-radius: 8px; background: #fff; color: #2f5c42; cursor: pointer; font-size: .78rem; padding: .32rem .45rem; }
+  .verification-task-card { display: grid; gap: .55rem; border: 1px solid #b8d9c3; border-radius: 10px; background: #f2fbf5; padding: .7rem; }
+  .verification-task-card div { display: grid; gap: .25rem; }
+  .verification-task-card small { color: #3f6a4f; font-size: .74rem; font-weight: 700; text-transform: uppercase; }
+  .verification-task-card strong { color: #172033; font-size: .9rem; }
+  .verification-task-card textarea { min-height: 76px; resize: vertical; border: 1px solid #b8d9c3; border-radius: 8px; background: #fff; color: #172033; font: inherit; padding: .6rem; }
+  .verification-task-card button { justify-self: start; border: 1px solid #3f7f5f; border-radius: 8px; background: #fff; color: #2f5c42; cursor: pointer; font-size: .82rem; padding: .45rem .65rem; }
+  .verification-task-card pre { max-height: 180px; overflow: auto; margin: 0; border: 1px solid #dbe4f0; border-radius: 8px; background: #fff; color: #35435d; font-size: .74rem; padding: .6rem; white-space: pre-wrap; }
   @media (max-width: 900px) { .workspace-shell { grid-template-columns: 1fr; } .reader-header, .reader-context-actions, .upload-strip { align-items: stretch; flex-direction: column; } .concept-workbench { grid-template-columns: 1fr; } }
 `;

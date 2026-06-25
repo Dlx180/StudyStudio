@@ -1,5 +1,5 @@
 import type { ReadingUnit } from "@knowtree/shared";
-import type { ConsoleOutput, SelectionContext } from "./types";
+import type { ActiveVerificationTask, ConsoleOutput, SelectionContext } from "./types";
 
 type ExplainSelectionPayload = {
   citation?: {
@@ -21,7 +21,13 @@ function explainPayload(output: ConsoleOutput): ExplainSelectionPayload | null {
   return output.result.payload as ExplainSelectionPayload;
 }
 
-function TerminalResultDetails({ output }: { output: ConsoleOutput }) {
+function TerminalResultDetails({
+  output,
+  onCreateVerificationTask,
+}: {
+  output: ConsoleOutput;
+  onCreateVerificationTask: (result: NonNullable<ConsoleOutput["result"]>) => void;
+}) {
   const payload = explainPayload(output);
   if (!payload) return null;
 
@@ -44,9 +50,48 @@ function TerminalResultDetails({ output }: { output: ConsoleOutput }) {
       {output.result?.follow_up_actions.length ? (
         <div className="follow-up-actions">
           {output.result.follow_up_actions.map((action) => (
-            <span key={`${action.action}-${action.label}`}>{action.label}</span>
+            <button
+              key={`${action.action}-${action.label}`}
+              type="button"
+              onClick={() => {
+                if (output.result) onCreateVerificationTask(output.result);
+              }}
+            >
+              {action.label}
+            </button>
           ))}
         </div>
+      ) : null}
+    </div>
+  );
+}
+
+function VerificationTaskCard({
+  task,
+  onAnswerChange,
+  onSubmit,
+}: {
+  task: ActiveVerificationTask;
+  onAnswerChange: (answer: string) => void;
+  onSubmit: () => void;
+}) {
+  return (
+    <div className="verification-task-card">
+      <div>
+        <small>Inline verification task</small>
+        <strong>{task.prompt}</strong>
+      </div>
+      <textarea
+        value={task.answer}
+        onChange={(event) => onAnswerChange(event.target.value)}
+        placeholder="Write your answer in your own words."
+        aria-label="Verification answer"
+      />
+      <button type="button" onClick={onSubmit}>
+        Submit verification
+      </button>
+      {task.submission ? (
+        <pre aria-label="Verification submission payload">{JSON.stringify(task.submission.payload, null, 2)}</pre>
       ) : null}
     </div>
   );
@@ -64,8 +109,12 @@ export function InteractionConsole({
   visualRootCount,
   outputs,
   command,
+  activeVerificationTask,
   onCommandChange,
   onRunCommand,
+  onCreateVerificationTask,
+  onVerificationAnswerChange,
+  onSubmitVerificationTask,
 }: {
   activeUnit: ReadingUnit;
   currentPage: number;
@@ -78,8 +127,12 @@ export function InteractionConsole({
   visualRootCount: number;
   outputs: ConsoleOutput[];
   command: string;
+  activeVerificationTask: ActiveVerificationTask | null;
   onCommandChange: (value: string) => void;
   onRunCommand: () => void;
+  onCreateVerificationTask: (result: NonNullable<ConsoleOutput["result"]>) => void;
+  onVerificationAnswerChange: (answer: string) => void;
+  onSubmitVerificationTask: () => void;
 }) {
   const selectedText = selectionContext?.text ?? "";
   const sourceSpanId = selectionContext?.source_span?.source_span_id;
@@ -150,6 +203,14 @@ export function InteractionConsole({
         <button type="submit">Run</button>
       </form>
 
+      {activeVerificationTask ? (
+        <VerificationTaskCard
+          task={activeVerificationTask}
+          onAnswerChange={onVerificationAnswerChange}
+          onSubmit={onSubmitVerificationTask}
+        />
+      ) : null}
+
       <div className="console-output-stream" aria-label="Console output stream">
         {outputs.length === 0 ? (
           <p className="muted">Try `/ask`, `/note`, `/quiz`, or `/submit-tree`.</p>
@@ -158,7 +219,7 @@ export function InteractionConsole({
             <article key={output.id} className={`console-output ${output.kind}`}>
               <strong>{output.kind}</strong>
               <p>{output.text}</p>
-              <TerminalResultDetails output={output} />
+              <TerminalResultDetails output={output} onCreateVerificationTask={onCreateVerificationTask} />
             </article>
           ))
         )}
