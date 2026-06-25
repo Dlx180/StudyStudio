@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import type { PDFDocumentProxy } from "pdfjs-dist";
-import type { SelectionContext } from "./types";
+import type { SelectionAction, SelectionContext } from "./types";
 
 const PDFJS_ASSET_BASE_URL = "/pdfjs";
 const PDF_RENDER_PADDING = 32;
@@ -249,6 +249,7 @@ export function PdfReaderPane({
   onToggleDock,
   onUploadPdf,
   onCaptureSelection,
+  onSelectionAction,
   onTextSelection,
   onPageStep,
 }: {
@@ -264,9 +265,12 @@ export function PdfReaderPane({
   onToggleDock: () => void;
   onUploadPdf: (file: File | null) => void;
   onCaptureSelection: () => void;
+  onSelectionAction: (action: SelectionAction) => void;
   onTextSelection: (selection: SelectionContext) => void;
   onPageStep: (direction: 1 | -1) => void;
 }) {
+  const hasSelection = selectedText.trim().length > 0;
+
   return (
     <section className="document-pane" aria-label="Original material reader">
       <header className="reader-header">
@@ -287,7 +291,25 @@ export function PdfReaderPane({
         <button type="button" onClick={onCaptureSelection}>
           Capture sample selection
         </button>
-        {selectedText ? <span>Selection ready for console</span> : <span>Select text directly on the PDF page or capture a sample selection</span>}
+        {hasSelection ? (
+          <div className="selection-action-bar" aria-label="Selected text actions">
+            <span>{selectedText.length} chars selected</span>
+            <button type="button" onClick={() => onSelectionAction("explain")}>
+              Explain this
+            </button>
+            <button type="button" onClick={() => onSelectionAction("quiz")}>
+              Quiz me
+            </button>
+            <button type="button" onClick={() => onSelectionAction("find-source")}>
+              Find source
+            </button>
+            <button type="button" onClick={() => onSelectionAction("note")}>
+              Add note
+            </button>
+          </div>
+        ) : (
+          <span>Select text directly on the PDF page or capture a sample selection</span>
+        )}
       </div>
       {uploadStatus === "uploading" ? <p className="form-status">Uploading PDF...</p> : null}
       {uploadStatus === "error" ? <p className="form-status error">{uploadError}</p> : null}

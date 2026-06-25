@@ -21,10 +21,12 @@ export type EvidenceDraft = {
 
 export type ConsoleOutput = {
   id: string;
-  kind: "answer" | "note" | "quiz" | "evidence" | "system";
+  kind: "answer" | "note" | "quiz" | "source" | "evidence" | "system";
   text: string;
 };
 
 export type SelectionContext = SharedSelectionContext;
+
+export type SelectionAction = "explain" | "quiz" | "find-source" | "note";
 
 export type UnitSelectHandler = (unit: ReadingUnit) => void;

@@ -5,7 +5,7 @@ import type { EvidenceEvent, InteractionTask, ReadingUnit, ResourceRef, SourceSp
 import { API_BASE_URL, conceptItems, SAMPLE_SELECTION, units } from "./workspace/data";
 import { PdfReaderPane } from "./workspace/pdf-reader-pane";
 import { RightDock } from "./workspace/right-dock";
-import type { ConceptTreeNode, ConsoleOutput, EvidenceDraft, SelectionContext } from "./workspace/types";
+import type { ConceptTreeNode, ConsoleOutput, EvidenceDraft, SelectionAction, SelectionContext } from "./workspace/types";
 import { addConceptToTree, countTreeNodes, flattenConceptTree, flattenUnits, removeConceptFromTree } from "./workspace/tree-utils";
 import { WORKSPACE_FALLBACK_STYLES } from "./workspace/workspace-fallback-styles";
 
@@ -142,6 +142,38 @@ export function MockWorkspace() {
     }
   }
 
+  function selectedTextPreview() {
+    const text = selectionContext?.text.trim() ?? "";
+    if (text.length <= 160) return text;
+    return `${text.slice(0, 157)}...`;
+  }
+
+  function runSelectionAction(action: SelectionAction) {
+    if (!selectionContext) {
+      addOutput("system", "Select source text before running a learning action.");
+      return;
+    }
+
+    const sourceLabel = selectionContext.source_span
+      ? `page ${selectionContext.page} / ${selectionContext.source_span.source_span_id}`
+      : `page ${selectionContext.page} / ${selectionContext.source}`;
+    const preview = selectedTextPreview();
+
+    if (action === "explain") {
+      addOutput(
+        "answer",
+        `Explain this (${sourceLabel}): queued a structured explanation for "${preview}". Next step: create a short verification task from this passage.`,
+      );
+    } else if (action === "quiz") {
+      addOutput("quiz", `Quiz me (${sourceLabel}): explain the selected passage in your own words, then compare your answer with the source.`);
+    } else if (action === "find-source") {
+      addOutput("source", `Find source: this selection is attached to ${sourceLabel}.`);
+    } else if (action === "note") {
+      const note = draftText.trim() || preview;
+      addOutput("note", `Note draft from ${sourceLabel}: ${note}`);
+    }
+  }
+
   function runCommand() {
     const trimmed = command.trim();
     if (!trimmed) return;
@@ -234,6 +266,7 @@ export function MockWorkspace() {
         onToggleDock={() => setRightDockOpen((open) => !open)}
         onUploadPdf={(file) => void uploadPdf(file)}
         onCaptureSelection={() => setSelectionContext({ text: SAMPLE_SELECTION, page: currentPage, source: "sample" })}
+        onSelectionAction={runSelectionAction}
         onTextSelection={(selection) => void persistSourceSelection(selection)}
         onPageStep={stepPage}
       />

@@ -10,10 +10,13 @@ export const WORKSPACE_FALLBACK_STYLES = `
   .reader-header, .reader-context-actions, .dock-panel-header, .selection-card-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; }
   .reader-header h1 { margin: 0; }
   .eyebrow { margin: 0 0 .5rem; color: #506386; font-size: .78rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
-  .dock-toggle, .reader-context-actions button, .page-controls button, .dock-panel-header, .concept-chip, .concept-tree-node button, .selection-card button, .command-line button, .visual-actions button { border: 1px solid #cbd8ea; border-radius: 8px; background: #fff; color: #172033; cursor: pointer; }
+  .dock-toggle, .reader-context-actions button, .selection-action-bar button, .page-controls button, .dock-panel-header, .concept-chip, .concept-tree-node button, .selection-card button, .command-line button, .visual-actions button { border: 1px solid #cbd8ea; border-radius: 8px; background: #fff; color: #172033; cursor: pointer; }
   .dock-toggle, .reader-context-actions button, .page-controls button { padding: .55rem .75rem; }
   .upload-strip { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin: 1rem 0; border: 1px solid #cbd8ea; border-radius: 10px; background: #f7f9fd; padding: .75rem .9rem; color: #35435d; cursor: pointer; }
   .reader-context-actions { margin: -.35rem 0 .85rem; color: #60718f; font-size: .86rem; }
+  .selection-action-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: .45rem; }
+  .selection-action-bar span { color: #506386; font-size: .82rem; }
+  .selection-action-bar button:first-of-type { border-color: #2253ff; background: #eef3ff; color: #173ea5; font-weight: 700; }
   .page-card { display: grid; min-height: 62vh; place-items: center; border: 1px dashed #9eb2cf; border-radius: 20px; background: linear-gradient(135deg, #eef4ff, #fff); padding: 2rem; text-align: center; }
   .page-card strong { font-size: clamp(3rem, 12vw, 8rem); }
   .page-card p { max-width: 480px; }
@@ -71,5 +74,6 @@ export const WORKSPACE_FALLBACK_STYLES = `
   .console-output strong { color: #506386; font-size: .74rem; text-transform: uppercase; }
   .console-output p { margin: 0; color: #172033; font-size: .88rem; }
   .console-output.evidence { border-color: #b8d9c3; background: #f2fbf5; }
+  .console-output.source { border-color: #b8c7e8; background: #f4f7ff; }
   @media (max-width: 900px) { .workspace-shell { grid-template-columns: 1fr; } .reader-header, .reader-context-actions, .upload-strip { align-items: stretch; flex-direction: column; } .concept-workbench { grid-template-columns: 1fr; } }
 `;

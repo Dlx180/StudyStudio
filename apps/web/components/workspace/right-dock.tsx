@@ -87,7 +87,7 @@ export function RightDock({
         />
       </DockPanel>
 
-      <DockPanel title="Console" subtitle="Context, commands, outputs" isOpen={consolePanelOpen} onToggle={onToggleConsolePanel}>
+      <DockPanel title="Study Terminal" subtitle="Context, commands, outputs" isOpen={consolePanelOpen} onToggle={onToggleConsolePanel}>
         <InteractionConsole
           activeUnit={activeUnit}
           currentPage={currentPage}

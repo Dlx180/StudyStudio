@@ -149,13 +149,34 @@ a {
   font-size: 0.86rem;
 }
 
-.reader-context-actions button {
+.reader-context-actions button,
+.selection-action-bar button {
   border: 1px solid #cbd8ea;
   border-radius: 8px;
   background: #ffffff;
   color: #172033;
   cursor: pointer;
   padding: 0.5rem 0.7rem;
+}
+
+.selection-action-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.45rem;
+}
+
+.selection-action-bar span {
+  color: #506386;
+  font-size: 0.82rem;
+}
+
+.selection-action-bar button:first-of-type {
+  border-color: #2253ff;
+  background: #eef3ff;
+  color: #173ea5;
+  font-weight: 700;
 }
 
 .form-status,
@@ -545,6 +566,11 @@ a {
 .console-output.evidence {
   border-color: #b8d9c3;
   background: #f2fbf5;
+}
+
+.console-output.source {
+  border-color: #b8c7e8;
+  background: #f4f7ff;
 }
 
 .concept-workbench {
