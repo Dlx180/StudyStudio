@@ -38,6 +38,8 @@ Resource
 
 The current implementation has already started this shape with a PDF reader, right-side dock, mock UnitTree, Visual Workspace, command console, text selection, and persisted InteractionTask/EvidenceEvent records.
 
+For a contributor-facing explanation of how the first GitHub issues connect, read `docs/mvp_issue_flow.md`.
+
 ## Milestone A: Focused MVP Loop
 
 Goal: prove one sharp user promise before broadening to all resource types and task types.

@@ -16,6 +16,8 @@ North-star metric:
 
 > Learning units completed with verification evidence.
 
+For the implementation flow and the relationship between GitHub issue numbers #2-#9, read `docs/mvp_issue_flow.md`.
+
 ## 1. Align docs and UI language around the focused MVP promise
 
 Labels: `type:docs`, `area:docs`, `area:studio-shell`, `ready-for-agent`, `priority:p0`
