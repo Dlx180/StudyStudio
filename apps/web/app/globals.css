@@ -195,17 +195,17 @@ a {
   min-height: 62vh;
   max-height: 70vh;
   place-items: start center;
-  overflow: hidden;
+  overflow: auto;
+  overscroll-behavior: contain;
   border: 1px solid #dbe4f0;
   border-radius: 12px;
   background: #eef2f7;
   padding: 1rem;
+  scrollbar-gutter: stable both-edges;
 }
 
 .pdf-canvas {
   display: block;
-  max-width: 100%;
-  height: auto;
   background: #ffffff;
   box-shadow: 0 18px 42px rgb(23 32 51 / 16%);
 }
@@ -213,6 +213,7 @@ a {
 .pdf-page-shell {
   position: relative;
   display: inline-block;
+  flex: 0 0 auto;
   line-height: 1;
 }
 

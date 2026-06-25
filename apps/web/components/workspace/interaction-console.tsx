@@ -31,6 +31,7 @@ export function InteractionConsole({
   onRunCommand: () => void;
 }) {
   const selectedText = selectionContext?.text ?? "";
+  const sourceSpanId = selectionContext?.source_span?.source_span_id;
 
   return (
     <section className="interaction-console" aria-label="Interaction Console">
@@ -44,7 +45,7 @@ export function InteractionConsole({
         <span>unit: {activeUnit.title}</span>
         <span>page: {currentPage}</span>
         <span>
-          selection: {selectionContext ? `${selectionContext.text.length} chars / page ${selectionContext.page} / ${selectionContext.source}` : "none"}
+          selection: {selectionContext ? `${selectionContext.text.length} chars / page ${selectionContext.page} / ${sourceSpanId ?? selectionContext.source}` : "none"}
         </span>
         <span>
           visual: concept-tree / {visualNodeCount} nodes / {visualRootCount} roots
@@ -66,7 +67,7 @@ export function InteractionConsole({
         {selectionContext ? (
           <blockquote>
             <small>
-              page {selectionContext.page} - {selectionContext.source}
+              page {selectionContext.page} - {sourceSpanId ? `SourceSpan ${sourceSpanId}` : selectionContext.source}
             </small>
             {selectionContext.text}
           </blockquote>

@@ -59,6 +59,7 @@ export interface SourceSpan {
   text?: string;
   bbox?: [number, number, number, number];
   created_by: "system" | "user" | "ai";
+  created_at?: string;
 }
 
 export interface ReadingUnit {
@@ -99,6 +100,8 @@ export interface SelectionContext {
   text: string;
   page: number;
   source: "pdf-text-layer" | "sample";
+  resource?: ResourceRef;
+  source_span?: SourceSpan;
 }
 
 export interface EvidenceEventRef {

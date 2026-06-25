@@ -10,6 +10,7 @@ from pydantic import BaseModel, Field
 from .interaction_store import create_evidence_event, create_interaction_task, list_evidence_events
 from .mock_data import get_mock_workspace
 from .resource_store import ResourceError, load_resource_metadata, save_pdf_resource
+from .source_span_store import SourceSpanError, create_source_span, get_source_span
 
 app = FastAPI(
     title="KnowTree API",
@@ -20,6 +21,7 @@ app = FastAPI(
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"],
+    allow_origin_regex=r"http://(localhost|127\.0\.0\.1):\d+",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -30,6 +32,32 @@ class SelectionContextPayload(BaseModel):
     text: str
     page: int
     source: Literal["pdf-text-layer", "sample"]
+
+
+class ResourceRefPayload(BaseModel):
+    resource_id: str = Field(min_length=1)
+    title: str = Field(min_length=1)
+    kind: Literal["pdf", "pptx", "video", "webpage", "transcript", "markdown", "code_repo", "note", "unknown"]
+
+
+class SourceSpanCreate(BaseModel):
+    resource: ResourceRefPayload
+    page: int = Field(ge=1)
+    text: str = Field(min_length=1)
+    start_offset: int | None = Field(default=None, ge=0)
+    end_offset: int | None = Field(default=None, ge=0)
+    bbox: tuple[float, float, float, float] | None = None
+    created_by: Literal["system", "user", "ai"] = "user"
+
+
+class SourceSpanRefPayload(BaseModel):
+    source_span_id: str = Field(min_length=1)
+    resource: ResourceRefPayload
+    locator: dict[str, Any]
+    text: str | None = None
+    bbox: tuple[float, float, float, float] | None = None
+    created_by: Literal["system", "user", "ai"]
+    created_at: str | None = None
 
 
 class InteractionTaskCreate(BaseModel):
@@ -49,7 +77,29 @@ class EvidenceEventCreate(BaseModel):
     summary: str = Field(min_length=1)
     task_id: str | None = None
     selection_context: SelectionContextPayload | None = None
+    source_refs: list[SourceSpanRefPayload] = Field(default_factory=list)
     payload: dict[str, Any] = Field(default_factory=dict)
+
+
+@app.post("/api/source-spans")
+def post_source_span(source_span: SourceSpanCreate) -> dict:
+    """Create a durable source reference from selected source text."""
+    if (source_span.start_offset is None) != (source_span.end_offset is None):
+        raise HTTPException(status_code=400, detail="start_offset and end_offset must be provided together.")
+
+    if source_span.start_offset is not None and source_span.end_offset is not None and source_span.end_offset <= source_span.start_offset:
+        raise HTTPException(status_code=400, detail="end_offset must be greater than start_offset.")
+
+    return create_source_span(source_span.model_dump())
+
+
+@app.get("/api/source-spans/{source_span_id}")
+def read_source_span(source_span_id: str) -> dict:
+    """Return a persisted SourceSpan."""
+    try:
+        return get_source_span(source_span_id)
+    except SourceSpanError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
 
 
 @app.get("/health")
@@ -106,7 +156,7 @@ def post_interaction_task(task: InteractionTaskCreate) -> dict:
 @app.post("/api/evidence-events")
 def post_evidence_event(event: EvidenceEventCreate) -> dict:
     """Create a learning evidence event from user interaction output."""
-    return create_evidence_event(event.model_dump())
+    return create_evidence_event(event.model_dump(exclude_none=True))
 
 
 @app.get("/api/evidence-events")

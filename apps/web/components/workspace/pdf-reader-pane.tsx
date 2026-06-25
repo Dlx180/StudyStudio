@@ -4,6 +4,11 @@ import { useEffect, useRef, useState } from "react";
 import type { PDFDocumentProxy } from "pdfjs-dist";
 import type { SelectionAction, SelectionContext } from "./types";
 
+const PDFJS_ASSET_BASE_URL = "/pdfjs";
+const PDF_RENDER_PADDING = 32;
+const PDF_MIN_SCALE = 0.75;
+const PDF_MAX_SCALE = 1.5;
+
 type PdfTextSpan = {
   id: string;
   text: string;
@@ -41,6 +46,7 @@ export function PdfCanvas({
   const [error, setError] = useState<string | null>(null);
   const [textSpans, setTextSpans] = useState<PdfTextSpan[]>([]);
   const [pageSize, setPageSize] = useState({ width: 0, height: 0 });
+  const [frameWidth, setFrameWidth] = useState(0);
 
   useEffect(() => {
     let cancelled = false;
@@ -54,7 +60,14 @@ export function PdfCanvas({
         const pdfjs = await import("pdfjs-dist");
         pdfjs.GlobalWorkerOptions.workerSrc = new URL("pdfjs-dist/build/pdf.worker.mjs", import.meta.url).toString();
 
-        const pdf = await pdfjs.getDocument({ url: fileUrl }).promise;
+        const pdf = await pdfjs.getDocument({
+          url: fileUrl,
+          cMapUrl: `${PDFJS_ASSET_BASE_URL}/cmaps/`,
+          cMapPacked: true,
+          iccUrl: `${PDFJS_ASSET_BASE_URL}/iccs/`,
+          standardFontDataUrl: `${PDFJS_ASSET_BASE_URL}/standard_fonts/`,
+          wasmUrl: `${PDFJS_ASSET_BASE_URL}/wasm/`,
+        }).promise;
         if (cancelled) return;
 
         pdfRef.current = pdf;
@@ -77,6 +90,22 @@ export function PdfCanvas({
   }, [fileUrl]);
 
   useEffect(() => {
+    const frame = frameRef.current;
+    if (!frame) return;
+
+    function updateFrameWidth() {
+      setFrameWidth(frame?.clientWidth ?? 0);
+    }
+
+    updateFrameWidth();
+
+    const observer = new ResizeObserver(updateFrameWidth);
+    observer.observe(frame);
+
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
     let cancelled = false;
 
     async function renderPage() {
@@ -84,22 +113,32 @@ export function PdfCanvas({
 
       renderTaskRef.current?.cancel();
 
-      const page = await pdfRef.current.getPage(pageNumber);
-      const scale = 1.35;
-      const viewport = page.getViewport({ scale });
-      const canvas = canvasRef.current;
-      const context = canvas.getContext("2d");
-      if (!context) return;
-
-      canvas.width = viewport.width;
-      canvas.height = viewport.height;
-      setPageSize({ width: viewport.width, height: viewport.height });
-      setTextSpans([]);
-
-      const renderTask = page.render({ canvas, canvasContext: context, viewport });
-      renderTaskRef.current = renderTask;
-
       try {
+        const page = await pdfRef.current.getPage(pageNumber);
+        const baseViewport = page.getViewport({ scale: 1 });
+        const availableWidth = Math.max(320, (frameWidth || frameRef.current?.clientWidth || baseViewport.width) - PDF_RENDER_PADDING);
+        const scale = Math.min(PDF_MAX_SCALE, Math.max(PDF_MIN_SCALE, availableWidth / baseViewport.width));
+        const viewport = page.getViewport({ scale });
+        const canvas = canvasRef.current;
+        const context = canvas?.getContext("2d");
+        if (!canvas || !context) return;
+
+        const outputScale = window.devicePixelRatio || 1;
+        canvas.width = Math.floor(viewport.width * outputScale);
+        canvas.height = Math.floor(viewport.height * outputScale);
+        canvas.style.width = `${viewport.width}px`;
+        canvas.style.height = `${viewport.height}px`;
+        setPageSize({ width: viewport.width, height: viewport.height });
+        setTextSpans([]);
+
+        const renderTask = page.render({
+          canvas,
+          canvasContext: context,
+          transform: outputScale === 1 ? undefined : [outputScale, 0, 0, outputScale, 0, 0],
+          viewport,
+        });
+        renderTaskRef.current = renderTask;
+
         await renderTask.promise;
         const textContent = await page.getTextContent();
         if (cancelled) return;
@@ -138,7 +177,7 @@ export function PdfCanvas({
       cancelled = true;
       renderTaskRef.current?.cancel();
     };
-  }, [pageNumber, status]);
+  }, [frameWidth, pageNumber, status]);
 
   useEffect(() => {
     const frame = frameRef.current;

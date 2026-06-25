@@ -20,9 +20,9 @@ export const WORKSPACE_FALLBACK_STYLES = `
   .page-card { display: grid; min-height: 62vh; place-items: center; border: 1px dashed #9eb2cf; border-radius: 20px; background: linear-gradient(135deg, #eef4ff, #fff); padding: 2rem; text-align: center; }
   .page-card strong { font-size: clamp(3rem, 12vw, 8rem); }
   .page-card p { max-width: 480px; }
-  .pdf-frame { display: grid; min-height: 62vh; max-height: 70vh; place-items: start center; overflow: hidden; border: 1px solid #dbe4f0; border-radius: 12px; background: #eef2f7; padding: 1rem; }
-  .pdf-canvas { display: block; max-width: 100%; height: auto; background: #fff; box-shadow: 0 18px 42px rgb(23 32 51 / 16%); }
-  .pdf-page-shell { position: relative; display: inline-block; line-height: 1; }
+  .pdf-frame { display: grid; min-height: 62vh; max-height: 70vh; place-items: start center; overflow: auto; overscroll-behavior: contain; border: 1px solid #dbe4f0; border-radius: 12px; background: #eef2f7; padding: 1rem; scrollbar-gutter: stable both-edges; }
+  .pdf-canvas { display: block; background: #fff; box-shadow: 0 18px 42px rgb(23 32 51 / 16%); }
+  .pdf-page-shell { position: relative; display: inline-block; flex: 0 0 auto; line-height: 1; }
   .pdf-text-layer { position: absolute; inset: 0; z-index: 2; overflow: hidden; user-select: text; }
   .pdf-text-layer span { position: absolute; color: transparent; white-space: pre; cursor: text; transform-origin: 0 0; }
   .pdf-text-layer ::selection { background: rgb(34 83 255 / 28%); }
