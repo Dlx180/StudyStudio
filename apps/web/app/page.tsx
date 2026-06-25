@@ -7,11 +7,11 @@ export default function HomePage() {
         <p className="eyebrow">KnowTree MVP</p>
         <h1>Read original material with an editable UnitTree beside it.</h1>
         <p>
-          The first development slice wires a mock Resource, page locator, UnitTree, and state
-          labels so the core reading interaction can be validated before PDF upload is added.
+          Upload a PDF, keep the original material visible, and use the UnitTree to navigate
+          learning-sized reading units beside the document.
         </p>
         <Link className="primary-link" href="/workspace">
-          Open mock workspace
+          Open workspace
         </Link>
       </section>
     </main>

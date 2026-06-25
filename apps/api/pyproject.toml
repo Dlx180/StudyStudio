@@ -5,6 +5,8 @@ description = "FastAPI backend for the KnowTree MVP reading workflow"
 requires-python = ">=3.12"
 dependencies = [
   "fastapi>=0.115.0",
+  "pypdf>=5.0.0",
+  "python-multipart>=0.0.9",
   "uvicorn[standard]>=0.30.0",
 ]
 

@@ -5,11 +5,13 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "start": "next start",
     "lint": "next lint"
   },
   "dependencies": {
     "@knowtree/shared": "file:../../packages/shared",
     "next": "^15.0.0",
+    "pdfjs-dist": "^6.0.227",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },

@@ -281,3 +281,57 @@ Options:
 4. use pgvector from the start.
 
 Current recommendation: do not block MVP on embeddings; add when question answering/retrieval needs it.
+
+## Decision 019: Product Shell Is StudyStudio
+
+Status: accepted
+
+The product direction is now StudyStudio: an interactive learning IDE with a trusted reading area, Architecture Tree, Visual Workspace, and Study Terminal.
+
+Rationale:
+
+- The intended experience is closer to a developer IDE than a simple reading or chat application.
+- The right-side tools are not secondary panels; they are where the user performs learning tasks.
+- Visual and terminal interactions provide evidence for learning state and scheduling.
+
+Consequences:
+
+- User-facing product language should move toward StudyStudio.
+- KnowTree can remain the repository name and may remain the name of the internal knowledge/tree engine unless later renamed.
+- UnitTree is no longer the whole product surface; it is one Architecture Tree view.
+
+## Decision 020: Evidence Drives State and Scheduling
+
+Status: accepted
+
+StudyStudio should update learning state from EvidenceEvents produced by explicit interactions.
+
+Rationale:
+
+- Mastery should not be inferred only from passive reading or opaque AI judgement.
+- Visual tasks, terminal commands, notes, quiz answers, source matching, and concept-tree submissions can all provide inspectable evidence.
+- A scheduler needs durable state and evidence, not just conversation history.
+
+Consequences:
+
+- InteractionTask and EvidenceEvent are core MVP objects.
+- StateOverlay v1 should be implemented from explicit rules before more complex AI assessment.
+- Scheduler v1 can be rule-based and cite evidence/state when recommending the next act.
+
+## Decision 021: SourceSpan Is an MVP Traceability Primitive
+
+Status: accepted
+
+SourceSpan should be treated as a core MVP primitive for selected or extracted original material spans.
+
+Rationale:
+
+- StudyStudio must help users connect questions, answers, notes, and tasks back to trusted source material.
+- "Find the original evidence" is one of the core learning interactions.
+- Future KnowledgeItems and relations should be source-backed rather than free-floating AI claims.
+
+Consequences:
+
+- Page extraction work should include stable source references where practical.
+- SelectionContext should evolve toward SourceSpan-backed context.
+- EvidenceEvents should attach SourceSpan references when available.
