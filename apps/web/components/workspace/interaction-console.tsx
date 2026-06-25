@@ -73,10 +73,8 @@ function TerminalResultDetails({
 
 function VerificationTaskCard({
   task,
-  onSubmit,
 }: {
   task: ActiveVerificationTask;
-  onSubmit: () => void;
 }) {
   return (
     <div className="verification-task-card">
@@ -88,12 +86,7 @@ function VerificationTaskCard({
       {task.submission ? (
         <pre aria-label="Verification submission payload">{JSON.stringify(task.submission.payload, null, 2)}</pre>
       ) : (
-        <>
-          <span>Use the Study Terminal draft above to answer this check.</span>
-          <button type="button" onClick={onSubmit}>
-            Submit verification
-          </button>
-        </>
+        <span>Awaiting response</span>
       )}
     </div>
   );
@@ -105,44 +98,45 @@ export function InteractionConsole({
   selectionContext,
   onCaptureSelection,
   onClearSelection,
-  draftText,
-  onDraftTextChange,
+  onClearTerminal,
+  terminalInput,
+  onTerminalInputChange,
   visualNodeCount,
   visualRootCount,
   outputs,
-  command,
   activeVerificationTask,
-  onCommandChange,
   onRunCommand,
   onCreateVerificationTask,
-  onSubmitVerificationTask,
 }: {
   activeUnit: ReadingUnit;
   currentPage: number;
   selectionContext: SelectionContext | null;
   onCaptureSelection: () => void;
   onClearSelection: () => void;
-  draftText: string;
-  onDraftTextChange: (value: string) => void;
+  onClearTerminal: () => void;
+  terminalInput: string;
+  onTerminalInputChange: (value: string) => void;
   visualNodeCount: number;
   visualRootCount: number;
   outputs: ConsoleOutput[];
-  command: string;
   activeVerificationTask: ActiveVerificationTask | null;
-  onCommandChange: (value: string) => void;
   onRunCommand: () => void;
   onCreateVerificationTask: (result: NonNullable<ConsoleOutput["result"]>) => void;
-  onSubmitVerificationTask: () => void;
 }) {
-  const selectedText = selectionContext?.text ?? "";
   const sourceSpanId = selectionContext?.source_span?.source_span_id;
+  const isAnsweringVerification = Boolean(activeVerificationTask && !activeVerificationTask.submission);
 
   return (
     <section className="interaction-console" aria-label="Interaction Console">
       <div className="console-header">
-        <p className="eyebrow">Study Terminal</p>
-        <strong>Command and action stream</strong>
-        <span>Natural reading actions and advanced commands appear here.</span>
+        <span>
+          <p className="eyebrow">Study Terminal</p>
+          <strong>Command and action stream</strong>
+          <small>Context-bound conversation input</small>
+        </span>
+        <button type="button" onClick={onClearTerminal}>
+          Clear terminal
+        </button>
       </div>
 
       <div className="context-stack" aria-label="Console context stack">
@@ -156,15 +150,15 @@ export function InteractionConsole({
         </span>
       </div>
 
-      <div className="selection-card">
+      <div className="selection-card compact">
         <div className="selection-card-header">
-          <strong>Selected text</strong>
+          <strong>Source context</strong>
           <span>
             <button type="button" onClick={onCaptureSelection}>
               Capture sample
             </button>
             <button type="button" onClick={onClearSelection}>
-              Clear
+              Clear selection
             </button>
           </span>
         </div>
@@ -178,12 +172,28 @@ export function InteractionConsole({
         ) : (
           <p className="muted">No source text selected yet.</p>
         )}
-        <textarea
-          value={draftText}
-          onChange={(event) => onDraftTextChange(event.target.value)}
-          placeholder="Draft a note, question, answer, or evidence explanation here."
-          aria-label="Console draft editor"
-        />
+      </div>
+
+      <div className="terminal-session">
+        <div className="console-output-stream" aria-label="Console output stream">
+          {outputs.length === 0 ? (
+            <p className="muted">No terminal output yet.</p>
+          ) : (
+            outputs.map((output) => (
+              <article key={output.id} className={`console-output ${output.kind}`}>
+                <strong>{output.kind === "user" ? "you" : output.kind}</strong>
+                <p>{output.text}</p>
+                <TerminalResultDetails
+                  output={output}
+                  activeVerificationTask={activeVerificationTask}
+                  onCreateVerificationTask={onCreateVerificationTask}
+                />
+              </article>
+            ))
+          )}
+        </div>
+
+        {activeVerificationTask ? <VerificationTaskCard task={activeVerificationTask} /> : null}
       </div>
 
       <form
@@ -195,38 +205,18 @@ export function InteractionConsole({
       >
         <span>&gt;</span>
         <input
-          value={command}
-          onChange={(event) => onCommandChange(event.target.value)}
-          placeholder="/ask, /note, /quiz, /submit-tree"
+          value={terminalInput}
+          onChange={(event) => onTerminalInputChange(event.target.value)}
+          onKeyDown={(event) => {
+            if (event.key !== "Enter" || event.nativeEvent.isComposing) return;
+            event.preventDefault();
+            onRunCommand();
+          }}
+          placeholder={isAnsweringVerification ? "Understanding check response" : "/ask, /note, /quiz, /submit-tree"}
           aria-label="Console command input"
         />
-        <button type="submit">Run</button>
+        <button type="submit">{isAnsweringVerification ? "Send" : "Run"}</button>
       </form>
-
-      {activeVerificationTask ? (
-        <VerificationTaskCard
-          task={activeVerificationTask}
-          onSubmit={onSubmitVerificationTask}
-        />
-      ) : null}
-
-      <div className="console-output-stream" aria-label="Console output stream">
-        {outputs.length === 0 ? (
-          <p className="muted">Try `/ask`, `/note`, `/quiz`, or `/submit-tree`.</p>
-        ) : (
-          outputs.map((output) => (
-            <article key={output.id} className={`console-output ${output.kind}`}>
-              <strong>{output.kind}</strong>
-              <p>{output.text}</p>
-              <TerminalResultDetails
-                output={output}
-                activeVerificationTask={activeVerificationTask}
-                onCreateVerificationTask={onCreateVerificationTask}
-              />
-            </article>
-          ))
-        )}
-      </div>
     </section>
   );
 }

@@ -15,11 +15,10 @@ export function RightDock({
   consolePanelOpen,
   treeDraft,
   availableConcepts,
-  draftText,
+  terminalInput,
   visualNodeCount,
   visualRootCount,
   outputs,
-  command,
   activeVerificationTask,
   onToggleUnitPanel,
   onToggleVisualPanel,
@@ -30,11 +29,10 @@ export function RightDock({
   onClearTree,
   onCaptureSelection,
   onClearSelection,
-  onDraftTextChange,
-  onCommandChange,
+  onClearTerminal,
+  onTerminalInputChange,
   onRunCommand,
   onCreateVerificationTask,
-  onSubmitVerificationTask,
 }: {
   units: ReadingUnit[];
   activeUnit: ReadingUnit;
@@ -45,11 +43,10 @@ export function RightDock({
   consolePanelOpen: boolean;
   treeDraft: ConceptTreeNode[];
   availableConcepts: ConceptItem[];
-  draftText: string;
+  terminalInput: string;
   visualNodeCount: number;
   visualRootCount: number;
   outputs: ConsoleOutput[];
-  command: string;
   activeVerificationTask: ActiveVerificationTask | null;
   onToggleUnitPanel: () => void;
   onToggleVisualPanel: () => void;
@@ -60,11 +57,10 @@ export function RightDock({
   onClearTree: () => void;
   onCaptureSelection: () => void;
   onClearSelection: () => void;
-  onDraftTextChange: (value: string) => void;
-  onCommandChange: (value: string) => void;
+  onClearTerminal: () => void;
+  onTerminalInputChange: (value: string) => void;
   onRunCommand: () => void;
   onCreateVerificationTask: (result: NonNullable<ConsoleOutput["result"]>) => void;
-  onSubmitVerificationTask: () => void;
 }) {
   return (
     <aside className="right-dock" aria-label="Learning workbench dock">
@@ -100,17 +96,15 @@ export function RightDock({
           selectionContext={selectionContext}
           onCaptureSelection={onCaptureSelection}
           onClearSelection={onClearSelection}
-          draftText={draftText}
-          onDraftTextChange={onDraftTextChange}
+          onClearTerminal={onClearTerminal}
+          terminalInput={terminalInput}
+          onTerminalInputChange={onTerminalInputChange}
           visualNodeCount={visualNodeCount}
           visualRootCount={visualRootCount}
           outputs={outputs}
-          command={command}
           activeVerificationTask={activeVerificationTask}
-          onCommandChange={onCommandChange}
           onRunCommand={onRunCommand}
           onCreateVerificationTask={onCreateVerificationTask}
-          onSubmitVerificationTask={onSubmitVerificationTask}
         />
       </DockPanel>
     </aside>

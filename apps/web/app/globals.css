@@ -391,7 +391,7 @@ a {
 }
 
 .interaction-console {
-  grid-template-rows: auto auto minmax(0, 0.9fr) auto auto minmax(96px, 1fr);
+  grid-template-rows: auto auto auto minmax(0, 1fr) auto;
   height: 100%;
 }
 
@@ -400,10 +400,22 @@ a {
   height: 100%;
 }
 
-.visual-header,
-.console-header {
+.visual-header {
   display: grid;
   gap: 0.25rem;
+}
+
+.console-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.console-header span {
+  display: grid;
+  gap: 0.2rem;
+  min-width: 0;
 }
 
 .visual-header strong,
@@ -412,11 +424,22 @@ a {
 }
 
 .visual-header span,
-.console-header span,
+.console-header small,
 .console-prompt,
 .muted {
   color: #60718f;
   font-size: 0.9rem;
+}
+
+.console-header button {
+  flex: 0 0 auto;
+  border: 1px solid #cbd8ea;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #172033;
+  cursor: pointer;
+  font-size: 0.82rem;
+  padding: 0.42rem 0.55rem;
 }
 
 .console-prompt {
@@ -449,6 +472,10 @@ a {
   padding: 0.75rem;
 }
 
+.selection-card.compact {
+  max-height: 150px;
+}
+
 .selection-card-header {
   display: flex;
   align-items: center;
@@ -473,23 +500,13 @@ a {
 }
 
 .selection-card blockquote {
-  max-height: 120px;
+  max-height: 82px;
   overflow: auto;
   margin: 0;
   border-left: 3px solid #2253ff;
   background: #f6f8fc;
   color: #35435d;
   padding: 0.65rem;
-}
-
-.selection-card textarea {
-  min-height: 72px;
-  resize: vertical;
-  border: 1px solid #cbd8ea;
-  border-radius: 8px;
-  padding: 0.65rem;
-  color: #172033;
-  font: inherit;
 }
 
 .command-line {
@@ -544,6 +561,18 @@ a {
   scrollbar-gutter: stable;
 }
 
+.terminal-session {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  gap: 0.55rem;
+  min-height: 0;
+  overflow: hidden;
+  border: 1px solid #dbe4f0;
+  border-radius: 10px;
+  background: #fbfcff;
+  padding: 0.65rem;
+}
+
 .console-output {
   display: grid;
   gap: 0.2rem;
@@ -551,6 +580,12 @@ a {
   border-radius: 10px;
   background: #ffffff;
   padding: 0.65rem;
+}
+
+.console-output.user {
+  margin-left: 1rem;
+  border-color: #cbd8ea;
+  background: #f7f9fd;
 }
 
 .console-output strong {
@@ -643,7 +678,7 @@ a {
 .verification-task-card {
   display: grid;
   gap: 0.55rem;
-  max-height: 220px;
+  max-height: 180px;
   overflow: auto;
   border: 1px solid #b8d9c3;
   border-radius: 10px;
@@ -680,17 +715,6 @@ a {
   overflow: hidden;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 3;
-}
-
-.verification-task-card button {
-  justify-self: start;
-  border: 1px solid #3f7f5f;
-  border-radius: 8px;
-  background: #ffffff;
-  color: #2f5c42;
-  cursor: pointer;
-  font-size: 0.82rem;
-  padding: 0.45rem 0.65rem;
 }
 
 .verification-task-card pre {

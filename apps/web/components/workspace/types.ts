@@ -27,7 +27,7 @@ export type EvidenceDraft = {
 
 export type ConsoleOutput = {
   id: string;
-  kind: "answer" | "note" | "quiz" | "source" | "evidence" | "system";
+  kind: "answer" | "note" | "quiz" | "source" | "evidence" | "system" | "user";
   text: string;
   result?: TerminalCommandResult;
 };
