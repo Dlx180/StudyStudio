@@ -8,8 +8,8 @@ export default function HomePage() {
           <p className="eyebrow">KnowTree companion workspace</p>
           <h1 id="home-title">Study with the source, the structure, and a calm guide beside you.</h1>
           <p>
-            Keep the original material in view while KnowTree tracks the current reading unit,
-            remembers your learning state, and offers the next gentle step.
+            Upload a PDF, keep the original material visible, and let KnowTree hold your reading
+            path, current state, and next useful move in one quiet workspace.
           </p>
           <Link className="primary-link" href="/workspace">
             Open workspace

@@ -1,8 +1,10 @@
 # Python
 __pycache__/
 .pytest_cache/
+.pytest-tmp/
 .venv/
 *.py[cod]
+*.egg-info/
 
 # Node
 node_modules/
@@ -15,3 +17,4 @@ npm-debug.log*
 .env.*
 !.env.example
 storage/
+tmp/

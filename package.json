@@ -9,6 +9,10 @@
   "scripts": {
     "web:dev": "npm --workspace @knowtree/web run dev",
     "web:build": "npm --workspace @knowtree/web run build",
+    "web:start": "npm --workspace @knowtree/web run start",
     "api:test": "cd apps/api && pytest"
+  },
+  "devDependencies": {
+    "playwright": "^1.61.0"
   }
 }
