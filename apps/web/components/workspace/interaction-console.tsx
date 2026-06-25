@@ -35,9 +35,9 @@ export function InteractionConsole({
   return (
     <section className="interaction-console" aria-label="Interaction Console">
       <div className="console-header">
-        <p className="eyebrow">Interaction Console</p>
-        <strong>Command stream</strong>
-        <span>Use commands to ask, draft, quiz, and submit visual work.</span>
+        <p className="eyebrow">Study Terminal</p>
+        <strong>Command and action stream</strong>
+        <span>Natural reading actions and advanced commands appear here.</span>
       </div>
 
       <div className="context-stack" aria-label="Console context stack">
