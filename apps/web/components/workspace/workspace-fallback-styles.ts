@@ -46,7 +46,7 @@ export const WORKSPACE_FALLBACK_STYLES = `
   .dock-panel-header b { color: #506386; font-size: .78rem; }
   .dock-panel-body { min-height: 0; overflow: auto; overscroll-behavior: contain; padding: 0 .85rem .85rem; scrollbar-gutter: stable; }
   .visual-workspace, .interaction-console { display: grid; gap: .85rem; min-height: 0; }
-  .interaction-console { grid-template-rows: auto auto minmax(0, auto) auto minmax(96px, 1fr); height: 100%; }
+  .interaction-console { grid-template-rows: auto auto minmax(0, .9fr) auto auto minmax(96px, 1fr); height: 100%; }
   .visual-workspace { grid-template-rows: auto auto minmax(0, 1fr) auto; height: 100%; }
   .concept-workbench { display: grid; grid-template-columns: 150px minmax(0, 1fr); gap: .75rem; min-height: 0; overflow: hidden; }
   .concept-pool, .concept-draft, .selection-card { min-height: 0; overflow: auto; border: 1px solid #dbe4f0; border-radius: 10px; background: #fff; padding: .75rem; }
@@ -62,7 +62,7 @@ export const WORKSPACE_FALLBACK_STYLES = `
   .selection-card { display: grid; gap: .65rem; }
   .selection-card-header span { display: flex; flex-wrap: wrap; gap: .4rem; }
   .selection-card blockquote { max-height: 120px; overflow: auto; margin: 0; border-left: 3px solid #2253ff; background: #f6f8fc; color: #35435d; padding: .65rem; }
-  .selection-card textarea { min-height: 92px; resize: vertical; border: 1px solid #cbd8ea; border-radius: 8px; padding: .65rem; color: #172033; font: inherit; }
+  .selection-card textarea { min-height: 72px; resize: vertical; border: 1px solid #cbd8ea; border-radius: 8px; padding: .65rem; color: #172033; font: inherit; }
   .context-stack { display: grid; gap: .35rem; border: 1px solid #dbe4f0; border-radius: 10px; background: #f7f9fd; padding: .65rem; }
   .context-stack span { color: #35435d; font-family: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace; font-size: .78rem; }
   .command-line { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: .5rem; align-items: center; border: 1px solid #cbd8ea; border-radius: 10px; background: #172033; padding: .55rem; }
@@ -83,11 +83,13 @@ export const WORKSPACE_FALLBACK_STYLES = `
   .follow-up-task { display: grid; gap: .2rem; border-left: 3px solid #3f7f5f; background: #f2fbf5; padding: .45rem .55rem; }
   .follow-up-actions { display: flex; flex-wrap: wrap; gap: .35rem; }
   .follow-up-actions button { border: 1px solid #b8d9c3; border-radius: 8px; background: #fff; color: #2f5c42; cursor: pointer; font-size: .78rem; padding: .32rem .45rem; }
-  .verification-task-card { display: grid; gap: .55rem; border: 1px solid #b8d9c3; border-radius: 10px; background: #f2fbf5; padding: .7rem; }
+  .follow-up-actions button:disabled { cursor: default; opacity: .7; }
+  .verification-task-card { display: grid; gap: .55rem; max-height: 220px; overflow: auto; border: 1px solid #b8d9c3; border-radius: 10px; background: #f2fbf5; padding: .7rem; }
   .verification-task-card div { display: grid; gap: .25rem; }
   .verification-task-card small { color: #3f6a4f; font-size: .74rem; font-weight: 700; text-transform: uppercase; }
   .verification-task-card strong { color: #172033; font-size: .9rem; }
-  .verification-task-card textarea { min-height: 76px; resize: vertical; border: 1px solid #b8d9c3; border-radius: 8px; background: #fff; color: #172033; font: inherit; padding: .6rem; }
+  .verification-task-card p, .verification-task-card span { margin: 0; color: #35435d; font-size: .82rem; }
+  .verification-task-card p { display: -webkit-box; overflow: hidden; -webkit-box-orient: vertical; -webkit-line-clamp: 3; }
   .verification-task-card button { justify-self: start; border: 1px solid #3f7f5f; border-radius: 8px; background: #fff; color: #2f5c42; cursor: pointer; font-size: .82rem; padding: .45rem .65rem; }
   .verification-task-card pre { max-height: 180px; overflow: auto; margin: 0; border: 1px solid #dbe4f0; border-radius: 8px; background: #fff; color: #35435d; font-size: .74rem; padding: .6rem; white-space: pre-wrap; }
   @media (max-width: 900px) { .workspace-shell { grid-template-columns: 1fr; } .reader-header, .reader-context-actions, .upload-strip { align-items: stretch; flex-direction: column; } .concept-workbench { grid-template-columns: 1fr; } }

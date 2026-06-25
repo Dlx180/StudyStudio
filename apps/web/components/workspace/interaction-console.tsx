@@ -12,6 +12,7 @@ type ExplainSelectionPayload = {
   };
   verification_task?: {
     prompt?: string;
+    source_excerpt?: string;
   };
 };
 
@@ -23,13 +24,16 @@ function explainPayload(output: ConsoleOutput): ExplainSelectionPayload | null {
 
 function TerminalResultDetails({
   output,
+  activeVerificationTask,
   onCreateVerificationTask,
 }: {
   output: ConsoleOutput;
+  activeVerificationTask: ActiveVerificationTask | null;
   onCreateVerificationTask: (result: NonNullable<ConsoleOutput["result"]>) => void;
 }) {
   const payload = explainPayload(output);
   if (!payload) return null;
+  const hasActiveVerificationTask = Boolean(activeVerificationTask);
 
   return (
     <div className="terminal-result-card">
@@ -53,11 +57,12 @@ function TerminalResultDetails({
             <button
               key={`${action.action}-${action.label}`}
               type="button"
+              disabled={hasActiveVerificationTask}
               onClick={() => {
                 if (output.result) onCreateVerificationTask(output.result);
               }}
             >
-              {action.label}
+              {hasActiveVerificationTask ? "Verification task created" : action.label}
             </button>
           ))}
         </div>
@@ -68,31 +73,28 @@ function TerminalResultDetails({
 
 function VerificationTaskCard({
   task,
-  onAnswerChange,
   onSubmit,
 }: {
   task: ActiveVerificationTask;
-  onAnswerChange: (answer: string) => void;
   onSubmit: () => void;
 }) {
   return (
     <div className="verification-task-card">
       <div>
-        <small>Inline verification task</small>
+        <small>Understanding check</small>
         <strong>{task.prompt}</strong>
+        <p>{task.source_excerpt}</p>
       </div>
-      <textarea
-        value={task.answer}
-        onChange={(event) => onAnswerChange(event.target.value)}
-        placeholder="Write your answer in your own words."
-        aria-label="Verification answer"
-      />
-      <button type="button" onClick={onSubmit}>
-        Submit verification
-      </button>
       {task.submission ? (
         <pre aria-label="Verification submission payload">{JSON.stringify(task.submission.payload, null, 2)}</pre>
-      ) : null}
+      ) : (
+        <>
+          <span>Use the Study Terminal draft above to answer this check.</span>
+          <button type="button" onClick={onSubmit}>
+            Submit verification
+          </button>
+        </>
+      )}
     </div>
   );
 }
@@ -113,7 +115,6 @@ export function InteractionConsole({
   onCommandChange,
   onRunCommand,
   onCreateVerificationTask,
-  onVerificationAnswerChange,
   onSubmitVerificationTask,
 }: {
   activeUnit: ReadingUnit;
@@ -131,7 +132,6 @@ export function InteractionConsole({
   onCommandChange: (value: string) => void;
   onRunCommand: () => void;
   onCreateVerificationTask: (result: NonNullable<ConsoleOutput["result"]>) => void;
-  onVerificationAnswerChange: (answer: string) => void;
   onSubmitVerificationTask: () => void;
 }) {
   const selectedText = selectionContext?.text ?? "";
@@ -206,7 +206,6 @@ export function InteractionConsole({
       {activeVerificationTask ? (
         <VerificationTaskCard
           task={activeVerificationTask}
-          onAnswerChange={onVerificationAnswerChange}
           onSubmit={onSubmitVerificationTask}
         />
       ) : null}
@@ -219,7 +218,11 @@ export function InteractionConsole({
             <article key={output.id} className={`console-output ${output.kind}`}>
               <strong>{output.kind}</strong>
               <p>{output.text}</p>
-              <TerminalResultDetails output={output} onCreateVerificationTask={onCreateVerificationTask} />
+              <TerminalResultDetails
+                output={output}
+                activeVerificationTask={activeVerificationTask}
+                onCreateVerificationTask={onCreateVerificationTask}
+              />
             </article>
           ))
         )}

@@ -39,6 +39,5 @@ export type SelectionAction = "explain" | "quiz" | "find-source" | "note";
 export type UnitSelectHandler = (unit: ReadingUnit) => void;
 
 export type ActiveVerificationTask = VerificationTaskDraft & {
-  answer: string;
   submission?: VerificationSubmissionDraft;
 };

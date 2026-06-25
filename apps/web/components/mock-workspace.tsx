@@ -53,12 +53,18 @@ export function MockWorkspace() {
     setOutputs((current) => [{ id: result.result_id, kind: result.kind === "answer" ? "answer" : "system", text: result.message, result }, ...current]);
   }
 
-  function createVerificationTaskFromResult(result: TerminalCommandResult) {
-    const verificationTask = result.follow_up_actions
+  function createVerificationTaskFromResult(result: TerminalCommandResult, announce = true) {
+    const followUpTask = result.follow_up_actions
       .map((action) => action.payload?.verification_task)
       .find((task): task is Omit<VerificationTaskDraft, "task_id" | "created_from_result_id" | "selected_text"> => {
         return Boolean(task && typeof task === "object" && "prompt" in task);
       });
+    const payloadTask = result.payload.verification_task;
+    const verificationTask =
+      followUpTask ??
+      (payloadTask && typeof payloadTask === "object" && "prompt" in payloadTask
+        ? (payloadTask as Omit<VerificationTaskDraft, "task_id" | "created_from_result_id" | "selected_text">)
+        : null);
 
     if (!verificationTask) {
       addOutput("system", "No verification task was available for this result.");
@@ -74,23 +80,20 @@ export function MockWorkspace() {
       task_id: `verification-task-${Date.now()}`,
       selected_text: selectedText,
       created_from_result_id: result.result_id,
-      answer: "",
     };
 
     setActiveVerificationTask(task);
-    addOutput("quiz", `Verification task created: ${task.prompt}`);
-  }
-
-  function updateVerificationAnswer(answer: string) {
-    setActiveVerificationTask((current) => (current ? { ...current, answer } : current));
+    if (announce) {
+      addOutput("quiz", `Understanding check ready: ${task.prompt}`);
+    }
   }
 
   function submitVerificationTask() {
     if (!activeVerificationTask) return;
 
-    const responseText = activeVerificationTask.answer.trim();
+    const responseText = draftText.trim();
     if (!responseText) {
-      addOutput("system", "Write an answer before submitting the verification task.");
+      addOutput("system", "Write your verification answer in the Study Terminal draft before submitting.");
       return;
     }
 
@@ -100,6 +103,7 @@ export function MockWorkspace() {
       response_text: responseText,
       payload: {
         prompt: activeVerificationTask.prompt,
+        source_excerpt: activeVerificationTask.source_excerpt,
         response_text: responseText,
         selected_text: activeVerificationTask.selected_text,
         page: activeVerificationTask.page,
@@ -109,7 +113,8 @@ export function MockWorkspace() {
       },
     };
 
-    setActiveVerificationTask({ ...activeVerificationTask, answer: responseText, submission });
+    setActiveVerificationTask({ ...activeVerificationTask, submission });
+    setDraftText("");
     addOutput("evidence", `Verification submission ready for EvidenceEvent: ${submission.submission_id}.`);
   }
 
@@ -239,6 +244,7 @@ export function MockWorkspace() {
       });
 
       addTerminalResultOutput(result);
+      createVerificationTaskFromResult(result, false);
     } catch (explainFailure) {
       addOutput("system", explainFailure instanceof Error ? `Explain this failed: ${explainFailure.message}` : "Explain this failed.");
     }
@@ -394,7 +400,6 @@ export function MockWorkspace() {
           onCommandChange={setCommand}
           onRunCommand={runCommand}
           onCreateVerificationTask={createVerificationTaskFromResult}
-          onVerificationAnswerChange={updateVerificationAnswer}
           onSubmitVerificationTask={submitVerificationTask}
         />
       ) : null}

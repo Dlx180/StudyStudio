@@ -34,7 +34,6 @@ export function RightDock({
   onCommandChange,
   onRunCommand,
   onCreateVerificationTask,
-  onVerificationAnswerChange,
   onSubmitVerificationTask,
 }: {
   units: ReadingUnit[];
@@ -65,7 +64,6 @@ export function RightDock({
   onCommandChange: (value: string) => void;
   onRunCommand: () => void;
   onCreateVerificationTask: (result: NonNullable<ConsoleOutput["result"]>) => void;
-  onVerificationAnswerChange: (answer: string) => void;
   onSubmitVerificationTask: () => void;
 }) {
   return (
@@ -112,7 +110,6 @@ export function RightDock({
           onCommandChange={onCommandChange}
           onRunCommand={onRunCommand}
           onCreateVerificationTask={onCreateVerificationTask}
-          onVerificationAnswerChange={onVerificationAnswerChange}
           onSubmitVerificationTask={onSubmitVerificationTask}
         />
       </DockPanel>

@@ -203,6 +203,7 @@ export interface VerificationTaskDraft {
   task_id: string;
   task_type: "short_answer";
   prompt: string;
+  source_excerpt: string;
   source: SelectionContext["source"];
   page: number;
   source_span_id?: string | null;
@@ -216,6 +217,7 @@ export interface VerificationSubmissionDraft {
   response_text: string;
   payload: {
     prompt: string;
+    source_excerpt: string;
     response_text: string;
     selected_text: string;
     page: number;
