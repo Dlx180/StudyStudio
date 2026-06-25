@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import type { EvidenceEvent, InteractionTask, ReadingUnit, ResourceRef, SourceSpan, UploadedResource } from "@knowtree/shared";
+import type { EvidenceEvent, InteractionTask, ReadingUnit, ResourceRef, SourceSpan, TerminalCommandResult, UploadedResource } from "@knowtree/shared";
 import { API_BASE_URL, conceptItems, SAMPLE_SELECTION, units } from "./workspace/data";
 import { PdfReaderPane } from "./workspace/pdf-reader-pane";
 import { RightDock } from "./workspace/right-dock";
@@ -36,6 +36,10 @@ export function MockWorkspace() {
 
   function addOutput(kind: ConsoleOutput["kind"], text: string) {
     setOutputs((current) => [{ id: `${Date.now()}-${current.length}`, kind, text }, ...current]);
+  }
+
+  function addTerminalResultOutput(result: TerminalCommandResult) {
+    setOutputs((current) => [{ id: result.result_id, kind: result.kind === "answer" ? "answer" : "system", text: result.message, result }, ...current]);
   }
 
   async function postJson<TResponse>(path: string, payload: Record<string, unknown>): Promise<TResponse> {
@@ -148,6 +152,27 @@ export function MockWorkspace() {
     return `${text.slice(0, 157)}...`;
   }
 
+  async function explainSelection() {
+    if (!selectionContext) {
+      addOutput("system", "Select source text before running a learning action.");
+      return;
+    }
+
+    try {
+      const result = await postJson<TerminalCommandResult>("/api/terminal-commands/explain-selection", {
+        session_id: sessionId,
+        unit_id: activeUnit.unitId,
+        unit_title: activeUnit.title,
+        selection_context: selectionContext,
+        source_refs: selectionContext.source_span ? [selectionContext.source_span] : [],
+      });
+
+      addTerminalResultOutput(result);
+    } catch (explainFailure) {
+      addOutput("system", explainFailure instanceof Error ? `Explain this failed: ${explainFailure.message}` : "Explain this failed.");
+    }
+  }
+
   function runSelectionAction(action: SelectionAction) {
     if (!selectionContext) {
       addOutput("system", "Select source text before running a learning action.");
@@ -160,10 +185,7 @@ export function MockWorkspace() {
     const preview = selectedTextPreview();
 
     if (action === "explain") {
-      addOutput(
-        "answer",
-        `Explain this (${sourceLabel}): queued a structured explanation for "${preview}". Next step: create a short verification task from this passage.`,
-      );
+      void explainSelection();
     } else if (action === "quiz") {
       addOutput("quiz", `Quiz me (${sourceLabel}): explain the selected passage in your own words, then compare your answer with the source.`);
     } else if (action === "find-source") {

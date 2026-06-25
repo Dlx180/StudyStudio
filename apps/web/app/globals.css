@@ -573,6 +573,64 @@ a {
   background: #f4f7ff;
 }
 
+.terminal-result-card {
+  display: grid;
+  gap: 0.45rem;
+  margin-top: 0.35rem;
+  border: 1px solid #c6d6f2;
+  border-radius: 8px;
+  background: #f7faff;
+  padding: 0.65rem;
+}
+
+.terminal-result-card span,
+.follow-up-task small {
+  color: #506386;
+  font-family: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace;
+  font-size: 0.74rem;
+}
+
+.terminal-result-card b {
+  color: #172033;
+  font-size: 0.9rem;
+}
+
+.terminal-result-card ul {
+  display: grid;
+  gap: 0.25rem;
+  margin: 0;
+  padding-left: 1.15rem;
+}
+
+.terminal-result-card li,
+.terminal-result-card p {
+  margin: 0;
+  color: #35435d;
+  font-size: 0.84rem;
+}
+
+.follow-up-task {
+  display: grid;
+  gap: 0.2rem;
+  border-left: 3px solid #3f7f5f;
+  background: #f2fbf5;
+  padding: 0.45rem 0.55rem;
+}
+
+.follow-up-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.follow-up-actions span {
+  border: 1px solid #b8d9c3;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #2f5c42;
+  padding: 0.32rem 0.45rem;
+}
+
 .concept-workbench {
   display: grid;
   grid-template-columns: 150px minmax(0, 1fr);

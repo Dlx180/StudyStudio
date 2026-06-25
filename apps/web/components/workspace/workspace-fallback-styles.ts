@@ -75,5 +75,13 @@ export const WORKSPACE_FALLBACK_STYLES = `
   .console-output p { margin: 0; color: #172033; font-size: .88rem; }
   .console-output.evidence { border-color: #b8d9c3; background: #f2fbf5; }
   .console-output.source { border-color: #b8c7e8; background: #f4f7ff; }
+  .terminal-result-card { display: grid; gap: .45rem; margin-top: .35rem; border: 1px solid #c6d6f2; border-radius: 8px; background: #f7faff; padding: .65rem; }
+  .terminal-result-card span, .follow-up-task small { color: #506386; font-family: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace; font-size: .74rem; }
+  .terminal-result-card b { color: #172033; font-size: .9rem; }
+  .terminal-result-card ul { display: grid; gap: .25rem; margin: 0; padding-left: 1.15rem; }
+  .terminal-result-card li, .terminal-result-card p { margin: 0; color: #35435d; font-size: .84rem; }
+  .follow-up-task { display: grid; gap: .2rem; border-left: 3px solid #3f7f5f; background: #f2fbf5; padding: .45rem .55rem; }
+  .follow-up-actions { display: flex; flex-wrap: wrap; gap: .35rem; }
+  .follow-up-actions span { border: 1px solid #b8d9c3; border-radius: 8px; background: #fff; color: #2f5c42; padding: .32rem .45rem; }
   @media (max-width: 900px) { .workspace-shell { grid-template-columns: 1fr; } .reader-header, .reader-context-actions, .upload-strip { align-items: stretch; flex-direction: column; } .concept-workbench { grid-template-columns: 1fr; } }
 `;

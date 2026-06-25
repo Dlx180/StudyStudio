@@ -1,6 +1,57 @@
 import type { ReadingUnit } from "@knowtree/shared";
 import type { ConsoleOutput, SelectionContext } from "./types";
 
+type ExplainSelectionPayload = {
+  citation?: {
+    label?: string;
+  };
+  explanation?: {
+    summary?: string;
+    key_points?: string[];
+    study_hint?: string;
+  };
+  verification_task?: {
+    prompt?: string;
+  };
+};
+
+function explainPayload(output: ConsoleOutput): ExplainSelectionPayload | null {
+  if (output.result?.payload.command !== "explain_selection") return null;
+
+  return output.result.payload as ExplainSelectionPayload;
+}
+
+function TerminalResultDetails({ output }: { output: ConsoleOutput }) {
+  const payload = explainPayload(output);
+  if (!payload) return null;
+
+  return (
+    <div className="terminal-result-card">
+      <span>{payload.citation?.label ?? "source citation"}</span>
+      <b>{payload.explanation?.summary}</b>
+      <ul>
+        {(payload.explanation?.key_points ?? []).map((point) => (
+          <li key={point}>{point}</li>
+        ))}
+      </ul>
+      {payload.explanation?.study_hint ? <p>{payload.explanation.study_hint}</p> : null}
+      {payload.verification_task?.prompt ? (
+        <div className="follow-up-task">
+          <small>Follow-up verification</small>
+          <p>{payload.verification_task.prompt}</p>
+        </div>
+      ) : null}
+      {output.result?.follow_up_actions.length ? (
+        <div className="follow-up-actions">
+          {output.result.follow_up_actions.map((action) => (
+            <span key={`${action.action}-${action.label}`}>{action.label}</span>
+          ))}
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
 export function InteractionConsole({
   activeUnit,
   currentPage,
@@ -107,6 +158,7 @@ export function InteractionConsole({
             <article key={output.id} className={`console-output ${output.kind}`}>
               <strong>{output.kind}</strong>
               <p>{output.text}</p>
+              <TerminalResultDetails output={output} />
             </article>
           ))
         )}

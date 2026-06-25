@@ -11,6 +11,7 @@ from .interaction_store import create_evidence_event, create_interaction_task, l
 from .mock_data import get_mock_workspace
 from .resource_store import ResourceError, load_resource_metadata, save_pdf_resource
 from .source_span_store import SourceSpanError, create_source_span, get_source_span
+from .terminal_commands import explain_selection
 
 app = FastAPI(
     title="KnowTree API",
@@ -26,12 +27,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-
-class SelectionContextPayload(BaseModel):
-    text: str
-    page: int
-    source: Literal["pdf-text-layer", "sample"]
 
 
 class ResourceRefPayload(BaseModel):
@@ -60,6 +55,14 @@ class SourceSpanRefPayload(BaseModel):
     created_at: str | None = None
 
 
+class SelectionContextPayload(BaseModel):
+    text: str
+    page: int
+    source: Literal["pdf-text-layer", "sample"]
+    resource: ResourceRefPayload | None = None
+    source_span: SourceSpanRefPayload | None = None
+
+
 class InteractionTaskCreate(BaseModel):
     session_id: str = Field(min_length=1)
     task_type: Literal["build_concept_tree", "ask", "note", "quiz"]
@@ -79,6 +82,14 @@ class EvidenceEventCreate(BaseModel):
     selection_context: SelectionContextPayload | None = None
     source_refs: list[SourceSpanRefPayload] = Field(default_factory=list)
     payload: dict[str, Any] = Field(default_factory=dict)
+
+
+class ExplainSelectionCreate(BaseModel):
+    session_id: str = Field(min_length=1)
+    unit_id: str = Field(min_length=1)
+    unit_title: str = Field(min_length=1)
+    selection_context: SelectionContextPayload
+    source_refs: list[SourceSpanRefPayload] = Field(default_factory=list)
 
 
 @app.post("/api/source-spans")
@@ -163,3 +174,9 @@ def post_evidence_event(event: EvidenceEventCreate) -> dict:
 def get_evidence_events(session_id: str | None = Query(default=None)) -> dict[str, list[dict]]:
     """Return persisted evidence events, optionally scoped to a session."""
     return {"events": list_evidence_events(session_id)}
+
+
+@app.post("/api/terminal-commands/explain-selection")
+def post_explain_selection(command: ExplainSelectionCreate) -> dict:
+    """Explain selected source text and return a structured terminal result."""
+    return explain_selection(command.model_dump(exclude_none=True))

@@ -1,4 +1,4 @@
-import type { ReadingUnit, SelectionContext as SharedSelectionContext } from "@knowtree/shared";
+import type { ReadingUnit, SelectionContext as SharedSelectionContext, TerminalCommandResult } from "@knowtree/shared";
 
 export type ConceptItem = {
   id: string;
@@ -23,6 +23,7 @@ export type ConsoleOutput = {
   id: string;
   kind: "answer" | "note" | "quiz" | "source" | "evidence" | "system";
   text: string;
+  result?: TerminalCommandResult;
 };
 
 export type SelectionContext = SharedSelectionContext;
