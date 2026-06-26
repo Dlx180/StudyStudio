@@ -331,9 +331,8 @@ export function MockWorkspace() {
       });
 
       setSelectionContext({ ...selection, resource: selectedResource, source_span: sourceSpan });
-      addOutput("system", `SourceSpan saved: ${sourceSpan.source_span_id} for page ${selection.page}.`);
-    } catch (sourceSpanFailure) {
-      addOutput("system", sourceSpanFailure instanceof Error ? `SourceSpan save failed: ${sourceSpanFailure.message}` : "SourceSpan save failed.");
+    } catch {
+      setSelectionContext({ ...selection, resource: selectedResource });
     }
   }
 
