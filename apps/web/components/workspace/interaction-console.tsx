@@ -61,7 +61,7 @@ export function InteractionConsole({
 
   return (
     <section className="interaction-console" aria-label="Study Terminal">
-      <div className="terminal-session">
+      <div className="terminal-shell">
         <div className="console-output-stream" aria-label="Terminal output stream">
           {outputs.length === 0 ? (
             <p className="muted">No terminal output yet.</p>
@@ -74,28 +74,28 @@ export function InteractionConsole({
             ))
           )}
         </div>
-      </div>
 
-      <form
-        className="command-line"
-        onSubmit={(event) => {
-          event.preventDefault();
-          onRunCommand();
-        }}
-      >
-        <span>&gt;</span>
-        <input
-          value={terminalInput}
-          onChange={(event) => onTerminalInputChange(event.target.value)}
-          onKeyDown={(event) => {
-            if (event.key !== "Enter" || event.nativeEvent.isComposing) return;
+        <form
+          className="command-line"
+          onSubmit={(event) => {
             event.preventDefault();
             onRunCommand();
           }}
-          placeholder={isAnsweringVerification ? "Understanding check response" : "/ask, /note, /quiz, /submit-tree, /clear"}
-          aria-label="Console command input"
-        />
-      </form>
+        >
+          <span>&gt;</span>
+          <input
+            value={terminalInput}
+            onChange={(event) => onTerminalInputChange(event.target.value)}
+            onKeyDown={(event) => {
+              if (event.key !== "Enter" || event.nativeEvent.isComposing) return;
+              event.preventDefault();
+              onRunCommand();
+            }}
+            placeholder={isAnsweringVerification ? "Understanding check response" : "/ask, /note, /quiz, /submit-tree, /clear"}
+            aria-label="Console command input"
+          />
+        </form>
+      </div>
     </section>
   );
 }
