@@ -162,11 +162,27 @@ export function MockWorkspace() {
     const concept = conceptItems.find((item) => item.id === conceptId);
     if (!concept || usedConceptIds.has(concept.id)) return;
 
+    const parent = parentId ? flattenConceptTree(treeDraft).find((node) => node.id === parentId) : null;
+    if (parentId && !parent) return;
+
     setTreeDraft((current) => addConceptToTree(current, concept, parentId));
+    addOutput("visual", parent ? `add child: ${concept.label} -> ${parent.label}` : `add root: ${concept.label}`);
   }
 
   function removeConcept(conceptId: string) {
+    const concept = flattenConceptTree(treeDraft).find((node) => node.id === conceptId);
+    if (!concept) return;
+
     setTreeDraft((current) => removeConceptFromTree(current, conceptId));
+    addOutput("visual", `remove node: ${concept.label}`);
+  }
+
+  function clearTreeDraft() {
+    const nodeCount = countTreeNodes(treeDraft);
+    if (nodeCount === 0) return;
+
+    setTreeDraft([]);
+    addOutput("visual", `clear draft: ${nodeCount} node${nodeCount === 1 ? "" : "s"}`);
   }
 
   async function submitTreeEvidence() {
@@ -410,7 +426,7 @@ export function MockWorkspace() {
           onSelectUnit={selectUnit}
           onDropConcept={dropConcept}
           onRemoveConcept={removeConcept}
-          onClearTree={() => setTreeDraft([])}
+          onClearTree={clearTreeDraft}
           onTerminalInputChange={setTerminalInput}
           onRunCommand={runCommand}
         />

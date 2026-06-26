@@ -71,6 +71,7 @@ export const WORKSPACE_FALLBACK_STYLES = `
   .console-output p { margin: 0; min-width: 0; color: #dbe7ff; white-space: pre-wrap; word-break: break-word; }
   .console-output.evidence { color: #c7f0d4; }
   .console-output.source { color: #d7e5ff; }
+  .console-output.visual { color: #d5e9ff; }
   .terminal-result-card { display: grid; gap: .35rem; min-width: 0; }
   .terminal-result-card span { color: #8ba4c8; font-family: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace; font-size: .74rem; }
   .terminal-result-card b { color: #eff6ff; font-size: .84rem; font-weight: 500; }

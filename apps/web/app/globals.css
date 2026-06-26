@@ -518,6 +518,10 @@ a {
   color: #d7e5ff;
 }
 
+.console-output.visual {
+  color: #d5e9ff;
+}
+
 .terminal-result-card {
   display: grid;
   gap: 0.35rem;
