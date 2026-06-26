@@ -83,7 +83,7 @@ export function MockWorkspace() {
 
     setActiveVerificationTask(task);
     if (announce) {
-      addOutput("quiz", `Understanding check ready: ${task.prompt}`);
+      addOutput("quiz", `Understanding check: ${task.prompt}\nSource excerpt: ${task.source_excerpt}`);
     }
   }
 
@@ -116,7 +116,7 @@ export function MockWorkspace() {
 
     setActiveVerificationTask({ ...activeVerificationTask, submission });
     setTerminalInput("");
-    addOutput("evidence", `Verification submission ready for EvidenceEvent: ${submission.submission_id}.`);
+    addOutput("evidence", `Verification submission ready for EvidenceEvent: ${submission.submission_id}.\n${JSON.stringify(submission.payload, null, 2)}`);
   }
 
   function clearTerminal() {
@@ -251,7 +251,7 @@ export function MockWorkspace() {
       });
 
       addTerminalResultOutput(result);
-      createVerificationTaskFromResult(result, false);
+      createVerificationTaskFromResult(result);
     } catch (explainFailure) {
       addOutput("system", explainFailure instanceof Error ? `Explain this failed: ${explainFailure.message}` : "Explain this failed.");
     }
@@ -289,6 +289,11 @@ export function MockWorkspace() {
     const trimmed = terminalInput.trim();
     if (!trimmed) return;
 
+    if (trimmed === "/clear") {
+      clearTerminal();
+      return;
+    }
+
     addOutput("user", trimmed);
 
     if (trimmed.startsWith("/ask")) {
@@ -302,7 +307,7 @@ export function MockWorkspace() {
     } else if (trimmed.startsWith("/submit-tree")) {
       void submitTreeEvidence();
     } else {
-      addOutput("system", `Unknown command: ${trimmed}. Try /ask, /note, /quiz, or /submit-tree.`);
+      addOutput("system", `Unknown command: ${trimmed}. Try /ask, /note, /quiz, /submit-tree, or /clear.`);
     }
 
     setTerminalInput("");
@@ -407,12 +412,8 @@ export function MockWorkspace() {
           onDropConcept={dropConcept}
           onRemoveConcept={removeConcept}
           onClearTree={() => setTreeDraft([])}
-          onCaptureSelection={() => setSelectionContext({ text: SAMPLE_SELECTION, page: currentPage, source: "sample" })}
-          onClearSelection={() => setSelectionContext(null)}
-          onClearTerminal={clearTerminal}
           onTerminalInputChange={setTerminalInput}
           onRunCommand={runCommand}
-          onCreateVerificationTask={createVerificationTaskFromResult}
         />
       ) : null}
     </main>

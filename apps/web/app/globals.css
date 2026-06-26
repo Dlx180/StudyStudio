@@ -391,7 +391,7 @@ a {
 }
 
 .interaction-console {
-  grid-template-rows: auto auto auto minmax(0, 1fr) auto;
+  grid-template-rows: minmax(0, 1fr) auto;
   height: 100%;
 }
 
@@ -405,113 +405,24 @@ a {
   gap: 0.25rem;
 }
 
-.console-header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 0.75rem;
-}
-
-.console-header span {
-  display: grid;
-  gap: 0.2rem;
-  min-width: 0;
-}
-
-.visual-header strong,
-.console-header strong {
+.visual-header strong {
   font-size: 1rem;
 }
 
 .visual-header span,
-.console-header small,
 .console-prompt,
 .muted {
   color: #60718f;
   font-size: 0.9rem;
 }
 
-.console-header button {
-  flex: 0 0 auto;
-  border: 1px solid #cbd8ea;
-  border-radius: 8px;
-  background: #ffffff;
-  color: #172033;
-  cursor: pointer;
-  font-size: 0.82rem;
-  padding: 0.42rem 0.55rem;
-}
-
 .console-prompt {
   margin: 0;
 }
 
-.context-stack {
-  display: grid;
-  gap: 0.35rem;
-  border: 1px solid #dbe4f0;
-  border-radius: 10px;
-  background: #f7f9fd;
-  padding: 0.65rem;
-}
-
-.context-stack span {
-  color: #35435d;
-  font-family: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace;
-  font-size: 0.78rem;
-}
-
-.selection-card {
-  display: grid;
-  gap: 0.65rem;
-  min-height: 0;
-  overflow: auto;
-  border: 1px solid #dbe4f0;
-  border-radius: 10px;
-  background: #ffffff;
-  padding: 0.75rem;
-}
-
-.selection-card.compact {
-  max-height: 150px;
-}
-
-.selection-card-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.75rem;
-}
-
-.selection-card-header span {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.4rem;
-}
-
-.selection-card button {
-  border: 1px solid #cbd8ea;
-  border-radius: 8px;
-  background: #ffffff;
-  color: #172033;
-  cursor: pointer;
-  font-size: 0.82rem;
-  padding: 0.42rem 0.55rem;
-}
-
-.selection-card blockquote {
-  max-height: 82px;
-  overflow: auto;
-  margin: 0;
-  border-left: 3px solid #2253ff;
-  background: #f6f8fc;
-  color: #35435d;
-  padding: 0.65rem;
-}
-
 .command-line {
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-columns: auto minmax(0, 1fr);
   gap: 0.5rem;
   align-items: center;
   border: 1px solid #cbd8ea;
@@ -538,7 +449,6 @@ a {
   color: #9eb2cf;
 }
 
-.command-line button,
 .visual-actions button {
   border: 1px solid #cbd8ea;
   border-radius: 8px;
@@ -563,8 +473,6 @@ a {
 
 .terminal-session {
   display: grid;
-  grid-template-rows: minmax(0, 1fr) auto;
-  gap: 0.55rem;
   min-height: 0;
   overflow: hidden;
   border: 1px solid #dbe4f0;
@@ -598,6 +506,7 @@ a {
   margin: 0;
   color: #172033;
   font-size: 0.88rem;
+  white-space: pre-wrap;
 }
 
 .console-output.evidence {
@@ -620,8 +529,7 @@ a {
   padding: 0.65rem;
 }
 
-.terminal-result-card span,
-.follow-up-task small {
+.terminal-result-card span {
   color: #506386;
   font-family: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace;
   font-size: 0.74rem;
@@ -644,90 +552,6 @@ a {
   margin: 0;
   color: #35435d;
   font-size: 0.84rem;
-}
-
-.follow-up-task {
-  display: grid;
-  gap: 0.2rem;
-  border-left: 3px solid #3f7f5f;
-  background: #f2fbf5;
-  padding: 0.45rem 0.55rem;
-}
-
-.follow-up-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.35rem;
-}
-
-.follow-up-actions button {
-  border: 1px solid #b8d9c3;
-  border-radius: 8px;
-  background: #ffffff;
-  color: #2f5c42;
-  cursor: pointer;
-  font-size: 0.78rem;
-  padding: 0.32rem 0.45rem;
-}
-
-.follow-up-actions button:disabled {
-  cursor: default;
-  opacity: 0.7;
-}
-
-.verification-task-card {
-  display: grid;
-  gap: 0.55rem;
-  max-height: 180px;
-  overflow: auto;
-  border: 1px solid #b8d9c3;
-  border-radius: 10px;
-  background: #f2fbf5;
-  padding: 0.7rem;
-}
-
-.verification-task-card div {
-  display: grid;
-  gap: 0.25rem;
-}
-
-.verification-task-card small {
-  color: #3f6a4f;
-  font-size: 0.74rem;
-  font-weight: 700;
-  text-transform: uppercase;
-}
-
-.verification-task-card strong {
-  color: #172033;
-  font-size: 0.9rem;
-}
-
-.verification-task-card p,
-.verification-task-card span {
-  margin: 0;
-  color: #35435d;
-  font-size: 0.82rem;
-}
-
-.verification-task-card p {
-  display: -webkit-box;
-  overflow: hidden;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 3;
-}
-
-.verification-task-card pre {
-  max-height: 180px;
-  overflow: auto;
-  margin: 0;
-  border: 1px solid #dbe4f0;
-  border-radius: 8px;
-  background: #ffffff;
-  color: #35435d;
-  font-size: 0.74rem;
-  padding: 0.6rem;
-  white-space: pre-wrap;
 }
 
 .concept-workbench {

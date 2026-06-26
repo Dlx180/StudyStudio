@@ -27,12 +27,8 @@ export function RightDock({
   onDropConcept,
   onRemoveConcept,
   onClearTree,
-  onCaptureSelection,
-  onClearSelection,
-  onClearTerminal,
   onTerminalInputChange,
   onRunCommand,
-  onCreateVerificationTask,
 }: {
   units: ReadingUnit[];
   activeUnit: ReadingUnit;
@@ -55,12 +51,8 @@ export function RightDock({
   onDropConcept: (conceptId: string, parentId: string | null) => void;
   onRemoveConcept: (conceptId: string) => void;
   onClearTree: () => void;
-  onCaptureSelection: () => void;
-  onClearSelection: () => void;
-  onClearTerminal: () => void;
   onTerminalInputChange: (value: string) => void;
   onRunCommand: () => void;
-  onCreateVerificationTask: (result: NonNullable<ConsoleOutput["result"]>) => void;
 }) {
   return (
     <aside className="right-dock" aria-label="Learning workbench dock">
@@ -89,22 +81,13 @@ export function RightDock({
         />
       </DockPanel>
 
-      <DockPanel title="Study Terminal" subtitle="Context, commands, outputs" isOpen={consolePanelOpen} onToggle={onToggleConsolePanel}>
+      <DockPanel title="Study Terminal" subtitle="Conversation" isOpen={consolePanelOpen} onToggle={onToggleConsolePanel}>
         <InteractionConsole
-          activeUnit={activeUnit}
-          currentPage={currentPage}
-          selectionContext={selectionContext}
-          onCaptureSelection={onCaptureSelection}
-          onClearSelection={onClearSelection}
-          onClearTerminal={onClearTerminal}
           terminalInput={terminalInput}
           onTerminalInputChange={onTerminalInputChange}
-          visualNodeCount={visualNodeCount}
-          visualRootCount={visualRootCount}
           outputs={outputs}
           activeVerificationTask={activeVerificationTask}
           onRunCommand={onRunCommand}
-          onCreateVerificationTask={onCreateVerificationTask}
         />
       </DockPanel>
     </aside>
