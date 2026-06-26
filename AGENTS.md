@@ -175,7 +175,7 @@ Use:
 - database migrations for schema evolution;
 - prompt versions for AI behavior changes;
 - ADR/decision updates in `docs/decisions.md` for major changes;
-- `docs/collaboration.md` for team roles and issue workflow.
+- `docs/collaboration.md` for team roles, issue workflow, branch rules, PR checks, and conflict-resolution policy.
 
 Avoid:
 

@@ -120,6 +120,128 @@ Best tasks:
 5. Pull requests reference the issue and include test results.
 6. Product/domain changes update docs before the issue is closed.
 
+## Git and Pull Request Workflow
+
+Use a short-branch workflow. `main` should stay runnable, and all implementation work should go through pull requests.
+
+### Branch Rules
+
+1. Protect `main` on GitHub.
+2. Do not push directly to `main`.
+3. Create one branch per issue or tightly scoped task.
+4. Keep branches short lived, ideally 1-3 days.
+5. Prefer small pull requests that do one thing.
+
+Recommended branch names:
+
+```text
+feature/pdf-upload
+feature/unit-tree-editing
+fix/resource-upload-error
+docs/collaboration-workflow
+codex/<short-task-name>
+```
+
+Use the `codex/` prefix for AI-assisted branches unless a human-owned branch name is clearer.
+
+### Daily Sync
+
+At the start of each work session:
+
+```bash
+git checkout main
+git pull origin main
+git checkout <your-branch>
+git merge origin/main
+```
+
+For this project, prefer `git merge origin/main` over rebasing shared branches. It is easier for a small team to audit and avoids accidental history rewrites.
+
+### Before Opening or Updating a PR
+
+Run this checklist:
+
+1. Pull the latest `main`.
+2. Merge `origin/main` into the feature branch.
+3. Resolve conflicts locally.
+4. Run the relevant checks.
+5. Push the updated branch.
+6. Make sure the PR says it can merge automatically.
+
+Typical commands:
+
+```bash
+git fetch origin
+git checkout <your-branch>
+git merge origin/main
+npm run web:build
+npm run api:test
+git push
+```
+
+If `npm run api:test` fails because local Python dependencies are missing, install the API dependencies or document the exact missing package in the PR.
+
+### Review and Merge Rules
+
+- Every PR should reference its issue, for example `Closes #12`.
+- Every PR should include what was tested.
+- At least one other collaborator should review before merge.
+- Use squash merge for small single-purpose PRs.
+- Use a merge commit when preserving a multi-commit integration history is useful.
+- Delete feature branches after merge.
+
+### Conflict Prevention
+
+Avoid having multiple people edit the same high-conflict files at the same time:
+
+- `package-lock.json`
+- `apps/web/app/globals.css`
+- `packages/shared/src/index.ts`
+- `docs/task_board.md`
+- large mock data or shared schema files
+
+When a task must touch one of these files, say so in the issue or team chat before starting.
+
+Suggested split for three active developers:
+
+- Developer A: API, persistence, tests under `apps/api`.
+- Developer B: frontend workspace components under `apps/web/components/workspace`.
+- Developer C: shared schemas, docs, issue triage, and integration checks.
+
+Rotate ownership as needed, but avoid two people making broad edits in the same area on the same day.
+
+### When GitHub Says "Can't Automatically Merge"
+
+Fix it from the feature branch:
+
+```bash
+git fetch origin
+git checkout <your-branch>
+git merge origin/main
+# resolve conflicts
+npm run web:build
+git push
+```
+
+Do not resolve complex conflicts directly in the GitHub web editor unless the change is documentation-only.
+
+### Dependency Changes
+
+- Commit `package-lock.json` when `package.json` changes.
+- Do not run `npm audit fix --force` inside an unrelated PR.
+- Mention new dependencies in the PR description.
+- Keep dependency changes separate from UI or API behavior changes when practical.
+
+### AI Agent Branches
+
+For AI-assisted work:
+
+1. Start from the latest `main`.
+2. Use a `codex/<task>` branch.
+3. Keep generated changes scoped to the issue.
+4. Ask the agent to report test results and known gaps.
+5. Review the diff before merging, especially generated docs, lockfiles, and shared schemas.
+
 ## Suggested Agent Skills
 
 The locally installed Matt Pocock skills are useful for this project:
