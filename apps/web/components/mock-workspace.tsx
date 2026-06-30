@@ -15,7 +15,7 @@ import type {
 import { API_BASE_URL, conceptItems, SAMPLE_SELECTION, units } from "./workspace/data";
 import { PdfReaderPane } from "./workspace/pdf-reader-pane";
 import { RightDock } from "./workspace/right-dock";
-import type { ActiveVerificationTask, ConceptTreeNode, ConsoleOutput, EvidenceDraft, SelectionAction, SelectionContext } from "./workspace/types";
+import type { ActiveVerificationTask, ConceptTreeNode, ConsoleOutput, EvidenceDraft, SelectionAction, SelectionContext, StateSummaryResult } from "./workspace/types";
 import { addConceptToTree, countTreeNodes, flattenConceptTree, flattenUnits, removeConceptFromTree } from "./workspace/tree-utils";
 import { WORKSPACE_FALLBACK_STYLES } from "./workspace/workspace-fallback-styles";
 
@@ -159,6 +159,18 @@ export function MockWorkspace() {
       setActiveVerificationTask({ ...activeVerificationTask, submission });
       setTerminalInput("");
       addOutput("evidence", `verification_submission: saved ${event.event_id} for ${task.task_id}. Response linked to page ${activeVerificationTask.page}.`);
+
+      try {
+        const stateSummary = await getJson<StateSummaryResult>(
+          `/api/state-summary?session_id=${encodeURIComponent(sessionId)}&unit_id=${encodeURIComponent(activeVerificationTask.unit_id)}`,
+        );
+        addOutput(
+          "state",
+          `StateOverlay: ${stateSummary.status} for ${activeVerificationTask.unit_title}. mastery ${stateSummary.mastery}, confidence ${stateSummary.confidence}, evidence ${stateSummary.evidence_count}.`,
+        );
+      } catch (stateFailure) {
+        addOutput("system", stateFailure instanceof Error ? `StateOverlay update failed: ${stateFailure.message}` : "StateOverlay update failed.");
+      }
     } catch (submitFailure) {
       addOutput(
         "system",
@@ -179,6 +191,17 @@ export function MockWorkspace() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
     });
+
+    if (!response.ok) {
+      const errorPayload = (await response.json().catch(() => null)) as { detail?: string } | null;
+      throw new Error(errorPayload?.detail ?? "Request failed.");
+    }
+
+    return (await response.json()) as TResponse;
+  }
+
+  async function getJson<TResponse>(path: string): Promise<TResponse> {
+    const response = await fetch(`${API_BASE_URL}${path}`);
 
     if (!response.ok) {
       const errorPayload = (await response.json().catch(() => null)) as { detail?: string } | null;

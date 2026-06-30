@@ -522,6 +522,10 @@ a {
   color: #d5e9ff;
 }
 
+.console-output.state {
+  color: #e4dcff;
+}
+
 .terminal-result-card {
   display: grid;
   gap: 0.35rem;

@@ -2,6 +2,7 @@ import type {
   ReadingUnit,
   SelectionContext as SharedSelectionContext,
   SourceSpan,
+  StateSummary,
   TerminalCommandResult,
   VerificationSubmissionDraft,
   VerificationTaskDraft,
@@ -28,9 +29,14 @@ export type EvidenceDraft = {
 
 export type ConsoleOutput = {
   id: string;
-  kind: "answer" | "note" | "quiz" | "source" | "evidence" | "system" | "user" | "visual";
+  kind: "answer" | "note" | "quiz" | "source" | "evidence" | "system" | "user" | "visual" | "state";
   text: string;
   result?: TerminalCommandResult;
+};
+
+export type StateSummaryResult = StateSummary & {
+  evidence_count: number;
+  latest_evidence_id?: string;
 };
 
 export type SelectionContext = SharedSelectionContext;

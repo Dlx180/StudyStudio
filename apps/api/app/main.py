@@ -11,6 +11,7 @@ from .interaction_store import create_evidence_event, create_interaction_task, l
 from .mock_data import get_mock_workspace
 from .resource_store import ResourceError, load_resource_metadata, save_pdf_resource
 from .source_span_store import SourceSpanError, create_source_span, get_source_span
+from .state_overlay import summarize_state
 from .terminal_commands import explain_selection
 
 app = FastAPI(
@@ -174,6 +175,12 @@ def post_evidence_event(event: EvidenceEventCreate) -> dict:
 def get_evidence_events(session_id: str | None = Query(default=None)) -> dict[str, list[dict]]:
     """Return persisted evidence events, optionally scoped to a session."""
     return {"events": list_evidence_events(session_id)}
+
+
+@app.get("/api/state-summary")
+def get_state_summary(session_id: str = Query(min_length=1), unit_id: str = Query(min_length=1)) -> dict:
+    """Return a conservative StateOverlay summary derived from evidence."""
+    return summarize_state(list_evidence_events(session_id), unit_id)
 
 
 @app.post("/api/terminal-commands/explain-selection")
