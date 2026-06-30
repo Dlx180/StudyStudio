@@ -36,7 +36,7 @@ Resource
 -> NextLearningAct
 ```
 
-The current implementation has already started this shape with a PDF reader, right-side dock, mock UnitTree, Visual Workspace, command console, text selection, and persisted InteractionTask/EvidenceEvent records.
+The current implementation has already started this shape with a PDF reader, right-side dock, mock Architecture Tree reading view, Visual Workspace, Study Terminal, text selection, persisted InteractionTask/EvidenceEvent records, StateOverlay summaries, and NextLearningAct recommendations.
 
 For a contributor-facing explanation of how the first GitHub issues connect, read `docs/mvp_issue_flow.md`.
 
@@ -56,13 +56,13 @@ Upload PDF
 
 ### Tasks
 
-- [ ] Make the product promise visible in README/product docs.
-- [ ] Add a natural action button for selected text: `Explain this`.
-- [ ] Return a structured explanation result for the selected passage.
-- [ ] Generate a small verification task from the explanation context.
-- [ ] Persist the user's verification response as an EvidenceEvent.
-- [ ] Update a simple StateOverlay from the verification result.
-- [ ] Return one NextLearningAct after verification.
+- [x] Make the product promise visible in README/product docs.
+- [x] Add a natural action button for selected text: `Explain this`.
+- [x] Return a structured explanation result for the selected passage.
+- [x] Generate a small verification task from the explanation context.
+- [x] Persist the user's verification response as an EvidenceEvent.
+- [x] Update a simple StateOverlay from the verification result.
+- [x] Return one NextLearningAct after verification.
 
 ### Acceptance Criteria
 
@@ -105,9 +105,9 @@ Goal: establish the Visual Studio-inspired learning IDE layout.
 - [x] Make dock panels collapsible.
 - [x] Add scroll containment for dock panels and terminal output.
 - [x] Split workspace into focused components.
-- [ ] Rename user-facing concepts from generic workspace/console wording toward StudyStudio language.
-- [ ] Define stable dock panel model: Architecture Tree, Visual Workspace, Study Terminal.
-- [ ] Add natural action buttons beside terminal commands for common actions.
+- [x] Rename user-facing concepts from generic workspace/console wording toward StudyStudio language.
+- [x] Define stable dock panel model: Architecture Tree, Visual Workspace, Study Terminal.
+- [x] Add natural action buttons beside terminal commands for common actions.
 - [ ] Add persistent panel state where useful.
 
 ### Acceptance Criteria
@@ -133,7 +133,7 @@ Goal: make real source material readable and selectable inside StudyStudio.
 - [x] Capture selected PDF text with page/source metadata.
 - [ ] Extract page text server-side.
 - [ ] Create lightweight Page records.
-- [ ] Create SourceSpan records for selectable or extracted text ranges.
+- [x] Create SourceSpan records for selectable or extracted text ranges.
 - [ ] Add tests for page extraction and SourceSpan traceability.
 
 ### Acceptance Criteria
@@ -178,7 +178,7 @@ Goal: make terminal commands first-class learning interactions.
 - [x] Persist `InteractionTask` and `EvidenceEvent` for `/submit-tree`.
 - [ ] Backendize `/note` as an EvidenceEvent.
 - [ ] Add `/find-source` for finding original evidence for a question or claim.
-- [ ] Add `/explain-selection` using selected SourceSpan context.
+- [x] Add `/explain-selection` using selected SourceSpan context.
 - [ ] Add `/quiz current` using current unit or selection context.
 - [ ] Add command parser tests.
 - [ ] Add graceful terminal error and retry behavior.
@@ -220,9 +220,9 @@ Goal: turn user interactions into learning state.
 ### Tasks
 
 - [x] Persist EvidenceEvent records.
-- [ ] Define StateOverlay / StateRecord schema.
+- [x] Define StateOverlay / StateRecord schema.
 - [ ] Define StateUpdate schema.
-- [ ] Implement simple rule-based state updater.
+- [x] Implement simple rule-based state updater.
 - [ ] Map note, quiz, source matching, and concept-tree evidence to state changes.
 - [ ] Display state indicators in Architecture Tree and current unit detail.
 - [ ] Add tests for state updates and non-mutation of source structures.
@@ -239,13 +239,13 @@ Goal: recommend the next learning action from state and evidence.
 
 ### Tasks
 
-- [ ] Define `NextLearningAct` schema.
-- [ ] Implement rule-based Scheduler v1.
-- [ ] Add terminal command `/next` or `/plan`.
+- [x] Define `NextLearningAct` schema.
+- [x] Implement rule-based Scheduler v1.
+- [x] Add terminal command `/next` or `/plan`.
 - [ ] Display a compact study plan panel or terminal output.
 - [ ] Add rules for explain, probe, repair, review, advance, and practice.
 - [ ] Persist scheduled actions if needed.
-- [ ] Add tests for scheduler decisions.
+- [x] Add tests for scheduler decisions.
 
 ### Acceptance Criteria
 

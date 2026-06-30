@@ -1,6 +1,6 @@
 # Proposals
 
-This directory stores product and architecture proposals for non-trivial changes to KnowTree.
+This directory stores product and architecture proposals for non-trivial changes to StudyStudio.
 
 A proposal is required when a change may affect product scope, data models, APIs, AI pipelines, document processing behavior, user workflows, testing strategy, or long-term architecture. Proposals help keep the project incremental and prevent ad-hoc rewrites.
 
@@ -176,7 +176,7 @@ Every proposal must preserve these project principles unless it explicitly propo
 2. The core MVP concepts remain stable: `Resource`, `FileTree`, `ReadingUnit`, `UnitTree`, `StateOverlay`.
 3. `Page` is a location unit, not the main learning unit.
 4. `ReadingUnit` is the primary learning unit for the MVP.
-5. `UnitTree` is the primary user-facing structure for the MVP.
+5. `UnitTree` is one Architecture Tree view; it is not the whole StudyStudio product surface.
 6. `KnowledgeGraph` is a later persistence and abstraction layer, not the first implementation target.
 7. AI-generated structures are candidates and must be editable, cacheable, and traceable to source ranges.
 8. Document handling should use progressive processing. Do not fully process long books page-by-page by default.

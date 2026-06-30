@@ -1,6 +1,10 @@
-# GitHub Issue Backlog Draft
+# GitHub Issue Backlog
 
-This file is a draft backlog for GitHub Issues. Publish these after labels are created.
+This file records the first StudyStudio issue batch. The GitHub issue numbers are now
+the source of truth; the local sections below keep their original draft numbering.
+
+Current status: this first MVP loop has been implemented through GitHub Issues #2-#9.
+Use `docs/mvp_issue_flow.md` for the canonical issue chain and numbering explanation.
 
 The first milestone is:
 
@@ -16,7 +20,8 @@ North-star metric:
 
 > Learning units completed with verification evidence.
 
-For the implementation flow and the relationship between GitHub issue numbers #2-#9, read `docs/mvp_issue_flow.md`.
+For the implementation flow and the relationship between GitHub issue numbers #2-#9,
+read `docs/mvp_issue_flow.md`.
 
 ## 1. Align docs and UI language around the focused MVP promise
 
@@ -28,10 +33,10 @@ Update visible copy and core docs so contributors and users understand the first
 
 ### Acceptance criteria
 
-- [ ] README and product spec state the focused MVP promise.
-- [ ] Workspace copy avoids presenting StudyStudio as a broad platform first.
-- [ ] Docs still preserve the source-agnostic long-term architecture.
-- [ ] Existing PDF upload and dock interactions still work.
+- [x] README and product spec state the focused MVP promise.
+- [x] Workspace copy avoids presenting StudyStudio as a broad platform first.
+- [x] Docs still preserve the source-agnostic long-term architecture.
+- [x] Existing PDF upload and dock interactions still work.
 
 ### Blocked by
 
@@ -47,10 +52,10 @@ When text is selected in the PDF reader, show natural action buttons such as `Ex
 
 ### Acceptance criteria
 
-- [ ] Selected text exposes visible action buttons.
-- [ ] `Explain this` creates the same structured command request shape as `/explain-selection`.
-- [ ] Study Terminal shows the command/result history without requiring command syntax.
-- [ ] Empty selection state is clear and lightweight.
+- [x] Selected text exposes visible action buttons.
+- [x] `Explain this` creates the same structured command request shape as `/explain-selection`.
+- [x] Study Terminal shows the command/result history without requiring command syntax.
+- [x] Empty selection state is clear and lightweight.
 
 ### Blocked by
 
@@ -66,10 +71,10 @@ Create a durable source reference for selected PDF text so explanations, notes, 
 
 ### Acceptance criteria
 
-- [ ] Selected PDF text can be represented as SourceSpan-like data.
-- [ ] SourceSpan references include resource id, page, text, and a range or fallback locator.
-- [ ] EvidenceEvents can attach source references when available.
-- [ ] Backend tests cover valid and fallback source references.
+- [x] Selected PDF text can be represented as SourceSpan-like data.
+- [x] SourceSpan references include resource id, page, text, and a range or fallback locator.
+- [x] EvidenceEvents can attach source references when available.
+- [x] Backend tests cover valid and fallback source references.
 
 ### Blocked by
 
@@ -85,11 +90,11 @@ Provide the first explanation flow for selected source text. The result should b
 
 ### Acceptance criteria
 
-- [ ] User can select text and trigger `Explain this`.
-- [ ] The result is a structured TerminalCommandResult, not only plain chat text.
-- [ ] The explanation cites the selected SourceSpan or fallback SelectionContext.
-- [ ] AI can be mocked in tests; real provider is not required in CI.
-- [ ] The result offers a follow-up verification task.
+- [x] User can select text and trigger `Explain this`.
+- [x] The result is a structured TerminalCommandResult, not only plain chat text.
+- [x] The explanation cites the selected SourceSpan or fallback SelectionContext.
+- [x] AI can be mocked in tests; real provider is not required in CI.
+- [x] The result offers a follow-up verification task.
 
 ### Blocked by
 
@@ -105,11 +110,11 @@ After an explanation, create one small task that checks whether the learner unde
 
 ### Acceptance criteria
 
-- [ ] Explanation result can open or create a verification task.
-- [ ] Task prompt is based on selected passage context.
-- [ ] User can submit a response.
-- [ ] Submission payload is inspectable and testable.
-- [ ] Visual Workspace is used only when it improves the task; simple tasks can render inline.
+- [x] Explanation result can open or create a verification task.
+- [x] Task prompt is based on selected passage context.
+- [x] User can submit a response.
+- [x] Submission payload is inspectable and testable.
+- [x] Visual Workspace is used only when it improves the task; simple tasks can render inline.
 
 ### Blocked by
 
@@ -125,10 +130,10 @@ Persist the user's verification response as learning evidence. The user should e
 
 ### Acceptance criteria
 
-- [ ] Verification submission creates an EvidenceEvent.
-- [ ] Evidence links to task, unit/page/selection, and source reference where available.
-- [ ] Terminal output confirms completion in user-friendly language.
-- [ ] Backend tests cover evidence creation and source reference attachment.
+- [x] Verification submission creates an EvidenceEvent.
+- [x] Evidence links to task, unit/page/selection, and source reference where available.
+- [x] Terminal output confirms completion in user-friendly language.
+- [x] Backend tests cover evidence creation and source reference attachment.
 
 ### Blocked by
 
@@ -144,11 +149,11 @@ Add a small rule-based state update from verification evidence. This should avoi
 
 ### Acceptance criteria
 
-- [ ] StateSummary supports at least `reading`, `weak`, `understood`, and `needs_review`.
-- [ ] Correct verification nudges state toward `understood`.
-- [ ] Failed or skipped verification nudges state toward `weak` or `needs_review`.
-- [ ] Taking a note alone does not mark a unit as mastered.
-- [ ] Tests cover positive, weak, and no-evidence cases.
+- [x] StateSummary supports at least `reading`, `weak`, `understood`, and `needs_review`.
+- [x] Correct verification nudges state toward `understood`.
+- [x] Failed or skipped verification nudges state toward `weak` or `needs_review`.
+- [x] Taking a note alone does not mark a unit as mastered.
+- [x] Tests cover positive, weak, and no-evidence cases.
 
 ### Blocked by
 
@@ -164,11 +169,11 @@ After state updates, recommend one next learning action. Keep the first schedule
 
 ### Acceptance criteria
 
-- [ ] A NextLearningAct is returned after verification.
-- [ ] If understanding is weak, recommend repair/review.
-- [ ] If understanding is sufficient, recommend advance/practice.
-- [ ] Recommendation cites the evidence or state reason.
-- [ ] User can also request the recommendation through `/next`.
+- [x] A NextLearningAct is returned after verification.
+- [x] If understanding is weak, recommend repair/review.
+- [x] If understanding is sufficient, recommend advance/practice.
+- [x] Recommendation cites the evidence or state reason.
+- [x] User can also request the recommendation through `/next`.
 
 ### Blocked by
 

@@ -1,6 +1,6 @@
 # Testing Strategy
 
-This document defines how to test KnowTree from the MVP onward.
+This document defines how to test StudyStudio from the MVP onward.
 
 ## 1. Testing Goals
 
@@ -8,9 +8,9 @@ Testing should ensure:
 
 1. uploaded resources are handled safely;
 2. PDF/PPT viewing and navigation work;
-3. UnitReading output is valid and usable;
-4. user state is persisted correctly;
-5. AI failures do not break the app;
+3. selected source spans remain traceable;
+4. explanation, verification, evidence, state, and next-step flows work together;
+5. AI or mock-AI failures do not break the app;
 6. user edits are protected;
 7. future extensions do not break MVP workflows.
 
@@ -67,18 +67,19 @@ Targets:
 Critical MVP E2E flow:
 
 ```text
-Create workspace
+Open StudyStudio
 -> upload PDF
 -> open viewer
--> generate UnitTree
--> click unit
--> jump to page
--> mark unit state
--> ask question
--> edit unit title/range
--> reload page
--> verify persisted state and edits
+-> select a difficult passage
+-> run Explain this
+-> answer the understanding check in Study Terminal
+-> verify EvidenceEvent is saved
+-> verify StateOverlay is updated
+-> verify NextLearningAct is recommended
 ```
+
+Later E2E coverage should add generated Architecture Tree views, UnitTree editing, reload
+persistence, and regeneration protection.
 
 ### 2.5 AI Contract Tests
 
@@ -133,11 +134,13 @@ Manual tests are important for reading UX.
 
 Checklist:
 
-- PDF scroll feels smooth.
-- Tree node click jumps to correct page.
-- Current unit highlight feels intuitive.
+- PDF upload, render, page navigation, and text selection feel reliable.
+- Selected-text actions stay visible only when useful and do not auto-submit text to Study Terminal.
+- Study Terminal behaves like a compact command transcript and auto-scrolls to the newest output.
+- Explain this creates a readable explanation plus one understanding check.
+- Submitting the check shows evidence, state, and next-step outputs.
 - Right panel does not block reading.
-- User can recover from failed AI generation.
+- User can recover from failed AI or mock-AI generation.
 - Long PDF does not trigger full expensive processing by default.
 - PPT conversion output is readable.
 
