@@ -2,7 +2,7 @@ import type { ReadingUnit } from "@knowtree/shared";
 import { DockPanel } from "./dock-panel";
 import { InteractionConsole } from "./interaction-console";
 import { UnitTreePanel } from "./unit-tree-panel";
-import type { ConceptItem, ConceptTreeNode, ConsoleOutput, SelectionContext, UnitSelectHandler } from "./types";
+import type { ActiveVerificationTask, ConceptItem, ConceptTreeNode, ConsoleOutput, SelectionContext, UnitSelectHandler } from "./types";
 import { VisualWorkspace } from "./visual-workspace";
 
 export function RightDock({
@@ -15,11 +15,11 @@ export function RightDock({
   consolePanelOpen,
   treeDraft,
   availableConcepts,
-  draftText,
+  terminalInput,
   visualNodeCount,
   visualRootCount,
   outputs,
-  command,
+  activeVerificationTask,
   onToggleUnitPanel,
   onToggleVisualPanel,
   onToggleConsolePanel,
@@ -27,10 +27,7 @@ export function RightDock({
   onDropConcept,
   onRemoveConcept,
   onClearTree,
-  onCaptureSelection,
-  onClearSelection,
-  onDraftTextChange,
-  onCommandChange,
+  onTerminalInputChange,
   onRunCommand,
 }: {
   units: ReadingUnit[];
@@ -42,11 +39,11 @@ export function RightDock({
   consolePanelOpen: boolean;
   treeDraft: ConceptTreeNode[];
   availableConcepts: ConceptItem[];
-  draftText: string;
+  terminalInput: string;
   visualNodeCount: number;
   visualRootCount: number;
   outputs: ConsoleOutput[];
-  command: string;
+  activeVerificationTask: ActiveVerificationTask | null;
   onToggleUnitPanel: () => void;
   onToggleVisualPanel: () => void;
   onToggleConsolePanel: () => void;
@@ -54,10 +51,7 @@ export function RightDock({
   onDropConcept: (conceptId: string, parentId: string | null) => void;
   onRemoveConcept: (conceptId: string) => void;
   onClearTree: () => void;
-  onCaptureSelection: () => void;
-  onClearSelection: () => void;
-  onDraftTextChange: (value: string) => void;
-  onCommandChange: (value: string) => void;
+  onTerminalInputChange: (value: string) => void;
   onRunCommand: () => void;
 }) {
   return (
@@ -87,20 +81,12 @@ export function RightDock({
         />
       </DockPanel>
 
-      <DockPanel title="Study Terminal" subtitle="Context, commands, outputs" isOpen={consolePanelOpen} onToggle={onToggleConsolePanel}>
+      <DockPanel title="Study Terminal" subtitle="Conversation" isOpen={consolePanelOpen} onToggle={onToggleConsolePanel}>
         <InteractionConsole
-          activeUnit={activeUnit}
-          currentPage={currentPage}
-          selectionContext={selectionContext}
-          onCaptureSelection={onCaptureSelection}
-          onClearSelection={onClearSelection}
-          draftText={draftText}
-          onDraftTextChange={onDraftTextChange}
-          visualNodeCount={visualNodeCount}
-          visualRootCount={visualRootCount}
+          terminalInput={terminalInput}
+          onTerminalInputChange={onTerminalInputChange}
           outputs={outputs}
-          command={command}
-          onCommandChange={onCommandChange}
+          activeVerificationTask={activeVerificationTask}
           onRunCommand={onRunCommand}
         />
       </DockPanel>

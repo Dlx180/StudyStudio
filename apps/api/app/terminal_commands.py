@@ -65,6 +65,7 @@ def explain_selection(payload: dict[str, Any]) -> dict[str, Any]:
     verification_task = {
         "task_type": "short_answer",
         "prompt": "Explain the selected passage in your own words, then name one term you are still unsure about.",
+        "source_excerpt": selected_preview,
         "source": selection_context["source"],
         "page": selection_context["page"],
         "source_span_id": source_refs[0]["source_span_id"] if source_refs else None,

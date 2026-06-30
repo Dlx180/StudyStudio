@@ -199,6 +199,34 @@ export interface FollowUpAction {
   payload?: Record<string, unknown>;
 }
 
+export interface VerificationTaskDraft {
+  task_id: string;
+  task_type: "short_answer";
+  prompt: string;
+  source_excerpt: string;
+  source: SelectionContext["source"];
+  page: number;
+  source_span_id?: string | null;
+  selected_text: string;
+  created_from_result_id: string;
+}
+
+export interface VerificationSubmissionDraft {
+  submission_id: string;
+  task_id: string;
+  response_text: string;
+  payload: {
+    prompt: string;
+    source_excerpt: string;
+    response_text: string;
+    selected_text: string;
+    page: number;
+    source: SelectionContext["source"];
+    source_span_id?: string | null;
+    submitted_at: string;
+  };
+}
+
 export interface TerminalCommandResult {
   result_id: string;
   kind: TerminalResultKind;

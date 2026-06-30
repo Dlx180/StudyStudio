@@ -1,11 +1,21 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import type { EvidenceEvent, InteractionTask, ReadingUnit, ResourceRef, SourceSpan, TerminalCommandResult, UploadedResource } from "@knowtree/shared";
+import type {
+  EvidenceEvent,
+  InteractionTask,
+  ReadingUnit,
+  ResourceRef,
+  SourceSpan,
+  TerminalCommandResult,
+  UploadedResource,
+  VerificationSubmissionDraft,
+  VerificationTaskDraft,
+} from "@knowtree/shared";
 import { API_BASE_URL, conceptItems, SAMPLE_SELECTION, units } from "./workspace/data";
 import { PdfReaderPane } from "./workspace/pdf-reader-pane";
 import { RightDock } from "./workspace/right-dock";
-import type { ConceptTreeNode, ConsoleOutput, EvidenceDraft, SelectionAction, SelectionContext } from "./workspace/types";
+import type { ActiveVerificationTask, ConceptTreeNode, ConsoleOutput, EvidenceDraft, SelectionAction, SelectionContext } from "./workspace/types";
 import { addConceptToTree, countTreeNodes, flattenConceptTree, flattenUnits, removeConceptFromTree } from "./workspace/tree-utils";
 import { WORKSPACE_FALLBACK_STYLES } from "./workspace/workspace-fallback-styles";
 
@@ -21,9 +31,9 @@ export function MockWorkspace() {
   const [sessionId] = useState(() => `session-${Date.now()}`);
   const [selectionContext, setSelectionContext] = useState<SelectionContext | null>(null);
   const [treeDraft, setTreeDraft] = useState<ConceptTreeNode[]>([]);
-  const [draftText, setDraftText] = useState("");
-  const [command, setCommand] = useState("");
+  const [terminalInput, setTerminalInput] = useState("");
   const [outputs, setOutputs] = useState<ConsoleOutput[]>([]);
+  const [activeVerificationTask, setActiveVerificationTask] = useState<ActiveVerificationTask | null>(null);
 
   const flatUnits = useMemo(() => flattenUnits(units), []);
   const activeUnit = flatUnits.find((unit) => currentPage >= unit.startPage && currentPage <= unit.endPage) ?? units[0];
@@ -35,11 +45,84 @@ export function MockWorkspace() {
   const visualRootCount = treeDraft.length;
 
   function addOutput(kind: ConsoleOutput["kind"], text: string) {
-    setOutputs((current) => [{ id: `${Date.now()}-${current.length}`, kind, text }, ...current]);
+    setOutputs((current) => [...current, { id: `${Date.now()}-${current.length}`, kind, text }]);
   }
 
   function addTerminalResultOutput(result: TerminalCommandResult) {
-    setOutputs((current) => [{ id: result.result_id, kind: result.kind === "answer" ? "answer" : "system", text: result.message, result }, ...current]);
+    setOutputs((current) => [...current, { id: result.result_id, kind: result.kind === "answer" ? "answer" : "system", text: result.message, result }]);
+  }
+
+  function createVerificationTaskFromResult(result: TerminalCommandResult, announce = true) {
+    const followUpTask = result.follow_up_actions
+      .map((action) => action.payload?.verification_task)
+      .find((task): task is Omit<VerificationTaskDraft, "task_id" | "created_from_result_id" | "selected_text"> => {
+        return Boolean(task && typeof task === "object" && "prompt" in task);
+      });
+    const payloadTask = result.payload.verification_task;
+    const verificationTask =
+      followUpTask ??
+      (payloadTask && typeof payloadTask === "object" && "prompt" in payloadTask
+        ? (payloadTask as Omit<VerificationTaskDraft, "task_id" | "created_from_result_id" | "selected_text">)
+        : null);
+
+    if (!verificationTask) {
+      addOutput("system", "No verification task was available for this result.");
+      return;
+    }
+
+    const selectedText = typeof result.payload.selection_context === "object" && result.payload.selection_context !== null && "text" in result.payload.selection_context
+      ? String(result.payload.selection_context.text)
+      : selectionContext?.text ?? "";
+
+    const task: ActiveVerificationTask = {
+      ...verificationTask,
+      task_id: `verification-task-${Date.now()}`,
+      selected_text: selectedText,
+      created_from_result_id: result.result_id,
+    };
+
+    setActiveVerificationTask(task);
+    if (announce) {
+      addOutput("quiz", `Understanding check: ${task.prompt}\nSource excerpt: ${task.source_excerpt}`);
+    }
+  }
+
+  function submitVerificationTask() {
+    if (!activeVerificationTask) return;
+
+    const responseText = terminalInput.trim();
+    if (!responseText) {
+      addOutput("system", "Write your understanding check answer in the Study Terminal input before submitting.");
+      return;
+    }
+
+    addOutput("user", responseText);
+
+    const submission: VerificationSubmissionDraft = {
+      submission_id: `verification-submission-${Date.now()}`,
+      task_id: activeVerificationTask.task_id,
+      response_text: responseText,
+      payload: {
+        prompt: activeVerificationTask.prompt,
+        source_excerpt: activeVerificationTask.source_excerpt,
+        response_text: responseText,
+        selected_text: activeVerificationTask.selected_text,
+        page: activeVerificationTask.page,
+        source: activeVerificationTask.source,
+        source_span_id: activeVerificationTask.source_span_id ?? null,
+        submitted_at: new Date().toISOString(),
+      },
+    };
+
+    setActiveVerificationTask({ ...activeVerificationTask, submission });
+    setTerminalInput("");
+    addOutput("evidence", `Verification submission ready for EvidenceEvent: ${submission.submission_id}.\n${JSON.stringify(submission.payload, null, 2)}`);
+  }
+
+  function clearTerminal() {
+    setOutputs([]);
+    setActiveVerificationTask(null);
+    setTerminalInput("");
   }
 
   async function postJson<TResponse>(path: string, payload: Record<string, unknown>): Promise<TResponse> {
@@ -79,11 +162,27 @@ export function MockWorkspace() {
     const concept = conceptItems.find((item) => item.id === conceptId);
     if (!concept || usedConceptIds.has(concept.id)) return;
 
+    const parent = parentId ? flattenConceptTree(treeDraft).find((node) => node.id === parentId) : null;
+    if (parentId && !parent) return;
+
     setTreeDraft((current) => addConceptToTree(current, concept, parentId));
+    addOutput("visual", parent ? `add child: ${concept.label} -> ${parent.label}` : `add root: ${concept.label}`);
   }
 
   function removeConcept(conceptId: string) {
+    const concept = flattenConceptTree(treeDraft).find((node) => node.id === conceptId);
+    if (!concept) return;
+
     setTreeDraft((current) => removeConceptFromTree(current, conceptId));
+    addOutput("visual", `remove node: ${concept.label}`);
+  }
+
+  function clearTreeDraft() {
+    const nodeCount = countTreeNodes(treeDraft);
+    if (nodeCount === 0) return;
+
+    setTreeDraft([]);
+    addOutput("visual", `clear draft: ${nodeCount} node${nodeCount === 1 ? "" : "s"}`);
   }
 
   async function submitTreeEvidence() {
@@ -92,7 +191,7 @@ export function MockWorkspace() {
       nodeCount: visualNodeCount,
       rootCount: visualRootCount,
       selectionLength: selectionContext?.text.length ?? 0,
-      draftLength: draftText.trim().length,
+      draftLength: terminalInput.trim().length,
       note:
         visualNodeCount === 0
           ? "No visual structure submitted yet."
@@ -130,7 +229,7 @@ export function MockWorkspace() {
           root_count: evidence.rootCount,
           selection_length: evidence.selectionLength,
           draft_length: evidence.draftLength,
-          draft_text: draftText,
+          draft_text: terminalInput,
           concept_tree: treeDraft,
           page: currentPage,
           resource_id: resource?.resource_id ?? null,
@@ -168,6 +267,7 @@ export function MockWorkspace() {
       });
 
       addTerminalResultOutput(result);
+      createVerificationTaskFromResult(result);
     } catch (explainFailure) {
       addOutput("system", explainFailure instanceof Error ? `Explain this failed: ${explainFailure.message}` : "Explain this failed.");
     }
@@ -191,30 +291,42 @@ export function MockWorkspace() {
     } else if (action === "find-source") {
       addOutput("source", `Find source: this selection is attached to ${sourceLabel}.`);
     } else if (action === "note") {
-      const note = draftText.trim() || preview;
+      const note = terminalInput.trim() || preview;
       addOutput("note", `Note draft from ${sourceLabel}: ${note}`);
     }
   }
 
   function runCommand() {
-    const trimmed = command.trim();
+    if (activeVerificationTask && !activeVerificationTask.submission) {
+      submitVerificationTask();
+      return;
+    }
+
+    const trimmed = terminalInput.trim();
     if (!trimmed) return;
 
+    if (trimmed === "/clear") {
+      clearTerminal();
+      return;
+    }
+
+    addOutput("user", trimmed);
+
     if (trimmed.startsWith("/ask")) {
-      const question = trimmed.replace("/ask", "").trim() || draftText || "Explain the current context.";
+      const question = trimmed.replace("/ask", "").trim() || "Explain the current context.";
       addOutput("answer", `Mock answer queued for: ${question}`);
     } else if (trimmed.startsWith("/note")) {
-      const note = trimmed.replace("/note", "").trim() || draftText || (selectionContext?.text ?? "");
+      const note = trimmed.replace("/note", "").trim() || (selectionContext?.text ?? "");
       addOutput("note", note ? `Saved note draft: ${note}` : "No note text was provided.");
     } else if (trimmed.startsWith("/quiz")) {
       addOutput("quiz", selectionContext ? "Explain the selected text without looking back at the source." : "Explain the current unit in your own words.");
     } else if (trimmed.startsWith("/submit-tree")) {
       void submitTreeEvidence();
     } else {
-      addOutput("system", `Unknown command: ${trimmed}. Try /ask, /note, /quiz, or /submit-tree.`);
+      addOutput("system", `Unknown command: ${trimmed}. Try /ask, /note, /quiz, /submit-tree, or /clear.`);
     }
 
-    setCommand("");
+    setTerminalInput("");
   }
 
   async function persistSourceSelection(selection: SelectionContext) {
@@ -235,9 +347,8 @@ export function MockWorkspace() {
       });
 
       setSelectionContext({ ...selection, resource: selectedResource, source_span: sourceSpan });
-      addOutput("system", `SourceSpan saved: ${sourceSpan.source_span_id} for page ${selection.page}.`);
-    } catch (sourceSpanFailure) {
-      addOutput("system", sourceSpanFailure instanceof Error ? `SourceSpan save failed: ${sourceSpanFailure.message}` : "SourceSpan save failed.");
+    } catch {
+      setSelectionContext({ ...selection, resource: selectedResource });
     }
   }
 
@@ -304,22 +415,19 @@ export function MockWorkspace() {
           consolePanelOpen={consolePanelOpen}
           treeDraft={treeDraft}
           availableConcepts={availableConcepts}
-          draftText={draftText}
+          terminalInput={terminalInput}
           visualNodeCount={visualNodeCount}
           visualRootCount={visualRootCount}
           outputs={outputs}
-          command={command}
+          activeVerificationTask={activeVerificationTask}
           onToggleUnitPanel={() => setUnitPanelOpen((open) => !open)}
           onToggleVisualPanel={() => setVisualPanelOpen((open) => !open)}
           onToggleConsolePanel={() => setConsolePanelOpen((open) => !open)}
           onSelectUnit={selectUnit}
           onDropConcept={dropConcept}
           onRemoveConcept={removeConcept}
-          onClearTree={() => setTreeDraft([])}
-          onCaptureSelection={() => setSelectionContext({ text: SAMPLE_SELECTION, page: currentPage, source: "sample" })}
-          onClearSelection={() => setSelectionContext(null)}
-          onDraftTextChange={setDraftText}
-          onCommandChange={setCommand}
+          onClearTree={clearTreeDraft}
+          onTerminalInputChange={setTerminalInput}
           onRunCommand={runCommand}
         />
       ) : null}

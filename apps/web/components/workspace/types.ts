@@ -1,4 +1,10 @@
-import type { ReadingUnit, SelectionContext as SharedSelectionContext, TerminalCommandResult } from "@knowtree/shared";
+import type {
+  ReadingUnit,
+  SelectionContext as SharedSelectionContext,
+  TerminalCommandResult,
+  VerificationSubmissionDraft,
+  VerificationTaskDraft,
+} from "@knowtree/shared";
 
 export type ConceptItem = {
   id: string;
@@ -21,7 +27,7 @@ export type EvidenceDraft = {
 
 export type ConsoleOutput = {
   id: string;
-  kind: "answer" | "note" | "quiz" | "source" | "evidence" | "system";
+  kind: "answer" | "note" | "quiz" | "source" | "evidence" | "system" | "user" | "visual";
   text: string;
   result?: TerminalCommandResult;
 };
@@ -31,3 +37,7 @@ export type SelectionContext = SharedSelectionContext;
 export type SelectionAction = "explain" | "quiz" | "find-source" | "note";
 
 export type UnitSelectHandler = (unit: ReadingUnit) => void;
+
+export type ActiveVerificationTask = VerificationTaskDraft & {
+  submission?: VerificationSubmissionDraft;
+};

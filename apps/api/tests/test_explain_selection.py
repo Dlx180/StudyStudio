@@ -48,6 +48,7 @@ def test_explain_selection_returns_structured_result_with_source_span(tmp_path, 
     assert result["payload"]["explanation"]["summary"]
     assert result["payload"]["explanation"]["key_points"]
     assert result["payload"]["verification_task"]["prompt"]
+    assert "A SourceSpan keeps the selected source text traceable" in result["payload"]["verification_task"]["source_excerpt"]
     assert result["follow_up_actions"][0]["label"] == "Create verification task"
 
 
