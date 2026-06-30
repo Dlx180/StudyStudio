@@ -365,6 +365,24 @@ export function MockWorkspace() {
     }
   }
 
+  async function askQuestion(question: string) {
+    try {
+      const result = await postJson<TerminalCommandResult>("/api/terminal-commands/ask", {
+        session_id: sessionId,
+        unit_id: activeUnit.unitId,
+        unit_title: activeUnit.title,
+        question,
+        current_page: currentPage,
+        resource: activeResourceRef(),
+        source_refs: selectionContext?.source_span ? [selectionContext.source_span] : [],
+      });
+
+      addTerminalResultOutput(result);
+    } catch (askFailure) {
+      addOutput("system", askFailure instanceof Error ? `Ask failed: ${askFailure.message}` : "Ask failed.");
+    }
+  }
+
   function runSelectionAction(action: SelectionAction) {
     if (!selectionContext) {
       addOutput("system", "Select source text before running a learning action.");
@@ -406,7 +424,7 @@ export function MockWorkspace() {
 
     if (trimmed.startsWith("/ask")) {
       const question = trimmed.replace("/ask", "").trim() || "Explain the current context.";
-      addOutput("answer", `Mock answer queued for: ${question}`);
+      void askQuestion(question);
     } else if (trimmed.startsWith("/note")) {
       const note = trimmed.replace("/note", "").trim() || (selectionContext?.text ?? "");
       addOutput("note", note ? `Saved note draft: ${note}` : "No note text was provided.");
