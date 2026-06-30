@@ -32,6 +32,7 @@ Read these first:
 - [CONTEXT.md](CONTEXT.md): domain glossary.
 - [docs/studystudio_contract.md](docs/studystudio_contract.md): shared interaction contract for frontend/backend work.
 - [docs/mvp_issue_flow.md](docs/mvp_issue_flow.md): how the first GitHub issues form one MVP learning loop.
+- [docs/second_batch_plan.md](docs/second_batch_plan.md): next collaborative issue batch after the first MVP loop.
 - [docs/task_board.md](docs/task_board.md): current development roadmap.
 - [docs/collaboration.md](docs/collaboration.md): GitHub workflow and team split.
 - [docs/github_issue_backlog.md](docs/github_issue_backlog.md): first issue backlog draft.

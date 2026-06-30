@@ -117,6 +117,7 @@ New features should not break this flow.
 - Added scroll containment for the right dock, individual dock panels, visual workspace, selected-text preview, and Console output stream.
 - Added backend `InteractionTask` and `EvidenceEvent` endpoints with local JSONL persistence, shared TypeScript types, and Console `/submit-tree` integration.
 - Added the focused StudyStudio MVP loop: selected-text actions, SourceSpan persistence, structured explanation results, terminal-based understanding checks, EvidenceEvent persistence, StateOverlay summaries, and NextLearningAct recommendations.
+- Added `docs/second_batch_plan.md` to record the next collaborative issue batch after the first MVP loop.
 
 - Added `docs/proposals/README.md` to define the proposal process, proposal template, lifecycle, and Codex usage guidance.
 - Added this changelog to record project changes and document change-management principles.
