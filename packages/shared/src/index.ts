@@ -93,7 +93,16 @@ export interface UploadedResource {
   original_filename: string;
   storage_path: string;
   page_count: number;
-  processing_status: "uploaded" | "parsed" | "profiled" | "failed";
+  processing_status: "uploaded" | "pages_extracted" | "parsed" | "profiled" | "failed";
+}
+
+export interface ResourcePage {
+  resource_id: string;
+  page: number;
+  locator: Extract<SourceLocator, { kind: "pdf_page" }>;
+  text: string;
+  extraction_status: "extracted" | "empty" | "failed";
+  extraction_error?: string;
 }
 
 export interface SelectionContext {

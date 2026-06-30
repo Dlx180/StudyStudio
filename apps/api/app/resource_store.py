@@ -41,7 +41,8 @@ def save_pdf_resource(filename: str, stream: BinaryIO) -> dict:
         shutil.copyfileobj(stream, output)
 
     try:
-        page_count = len(PdfReader(str(pdf_path)).pages)
+        reader = PdfReader(str(pdf_path))
+        page_count = len(reader.pages)
     except Exception as exc:  # pypdf raises several parser-specific exceptions.
         shutil.rmtree(resource_dir, ignore_errors=True)
         raise ResourceError("Uploaded file is not a readable PDF.") from exc
@@ -53,8 +54,10 @@ def save_pdf_resource(filename: str, stream: BinaryIO) -> dict:
         "original_filename": original_filename,
         "storage_path": str(pdf_path),
         "page_count": page_count,
-        "processing_status": "uploaded",
+        "processing_status": "pages_extracted",
     }
+    pages = _extract_pdf_pages(resource_id, reader)
+    (resource_dir / "pages.json").write_text(json.dumps(pages, indent=2), encoding="utf-8")
     (resource_dir / "metadata.json").write_text(json.dumps(metadata, indent=2), encoding="utf-8")
     return metadata
 
@@ -66,3 +69,45 @@ def load_resource_metadata(resource_id: str) -> dict:
         raise ResourceError("Resource was not found.")
 
     return json.loads(metadata_path.read_text(encoding="utf-8"))
+
+
+def load_resource_pages(resource_id: str) -> list[dict]:
+    """Load extracted Page records for a stored local Resource."""
+    resource_dir = get_storage_root() / "resources" / resource_id
+    pages_path = resource_dir / "pages.json"
+    if not pages_path.exists():
+        if not (resource_dir / "metadata.json").exists():
+            raise ResourceError("Resource was not found.")
+        return []
+
+    return json.loads(pages_path.read_text(encoding="utf-8"))
+
+
+def _extract_pdf_pages(resource_id: str, reader: PdfReader) -> list[dict]:
+    pages: list[dict] = []
+    for index, page in enumerate(reader.pages, start=1):
+        try:
+            text = (page.extract_text() or "").strip()
+            extraction_status = "extracted" if text else "empty"
+            error = None
+        except Exception as exc:  # Keep upload usable even when text extraction fails.
+            text = ""
+            extraction_status = "failed"
+            error = type(exc).__name__
+
+        record = {
+            "resource_id": resource_id,
+            "page": index,
+            "locator": {
+                "kind": "pdf_page",
+                "resource_id": resource_id,
+                "page": index,
+            },
+            "text": text,
+            "extraction_status": extraction_status,
+        }
+        if error:
+            record["extraction_error"] = error
+        pages.append(record)
+
+    return pages

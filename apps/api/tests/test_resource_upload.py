@@ -29,7 +29,7 @@ def test_pdf_upload_stores_resource_metadata(tmp_path, monkeypatch) -> None:
     assert payload["kind"] == "pdf"
     assert payload["title"] == "demo"
     assert payload["page_count"] == 2
-    assert payload["processing_status"] == "uploaded"
+    assert payload["processing_status"] == "pages_extracted"
 
     metadata_response = TestClient(app).get(f"/api/resources/{payload['resource_id']}")
     assert metadata_response.status_code == 200
