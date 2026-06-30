@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import type { ActiveVerificationTask, ConsoleOutput } from "./types";
 
 type ExplainSelectionPayload = {
@@ -58,11 +59,19 @@ export function InteractionConsole({
   onRunCommand: () => void;
 }) {
   const isAnsweringVerification = Boolean(activeVerificationTask && !activeVerificationTask.submission);
+  const outputStreamRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const outputStream = outputStreamRef.current;
+    if (!outputStream) return;
+
+    outputStream.scrollTop = outputStream.scrollHeight;
+  }, [outputs.length]);
 
   return (
     <section className="interaction-console" aria-label="Study Terminal">
       <div className="terminal-shell">
-        <div className="console-output-stream" aria-label="Terminal output stream">
+        <div ref={outputStreamRef} className="console-output-stream" aria-label="Terminal output stream">
           {outputs.length === 0 ? (
             <p className="muted">No terminal output yet.</p>
           ) : (
