@@ -73,6 +73,7 @@ export const WORKSPACE_FALLBACK_STYLES = `
   .console-output.source { color: #d7e5ff; }
   .console-output.visual { color: #d5e9ff; }
   .console-output.state { color: #e4dcff; }
+  .console-output.next { color: #ffe5bf; }
   .terminal-result-card { display: grid; gap: .35rem; min-width: 0; }
   .terminal-result-card span { color: #8ba4c8; font-family: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace; font-size: .74rem; }
   .terminal-result-card b { color: #eff6ff; font-size: .84rem; font-weight: 500; }

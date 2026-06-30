@@ -91,7 +91,7 @@ export function InteractionConsole({
               event.preventDefault();
               onRunCommand();
             }}
-            placeholder={isAnsweringVerification ? "Understanding check response" : "/ask, /note, /quiz, /submit-tree, /clear"}
+            placeholder={isAnsweringVerification ? "Understanding check response" : "/ask, /note, /quiz, /submit-tree, /next, /clear"}
             aria-label="Console command input"
           />
         </form>
