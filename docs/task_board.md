@@ -360,39 +360,34 @@ Goal: support common course material and multi-file study spaces.
 
 ## Suggested GitHub Issue Slices
 
-Use `docs/github_issue_backlog.md` as the current first batch. Each issue should stay focused on the passage-understanding MVP loop unless explicitly moved to backlog.
+The first issue batch is recorded in `docs/github_issue_backlog.md` and explained in
+`docs/mvp_issue_flow.md`. It is complete.
 
-1. **Rename the workspace shell to StudyStudio**
+The current recommended second batch is `docs/second_batch_plan.md`:
+
+1. **Issue #19: Extract PDF page text and expose Page records**
    - Blocked by: None.
-   - Covers: product language, dock panel naming, page copy.
+   - Covers: source text infrastructure for commands and context builders.
 
-2. **Persist Page text and SourceSpan references for uploaded PDFs**
+2. **Issue #20: Add ArchitectureTree view model and reading/file views**
+   - Blocked by: Page text is helpful, but mocks can start immediately.
+   - Covers: replacing the hard-coded UnitTree panel with typed tree views.
+
+3. **Issue #23: Save `/note` as an EvidenceEvent**
    - Blocked by: None.
-   - Covers: source traceability for terminal and visual tasks.
+   - Covers: terminal command, evidence persistence, tests.
 
-3. **Backendize `/note` as an EvidenceEvent**
-   - Blocked by: SourceSpan references preferred, but can start with SelectionContext.
-   - Covers: terminal command, API persistence, tests.
+4. **Issue #21: Implement `/find-source` v1**
+   - Blocked by: Page text extraction.
+   - Covers: source lookup from terminal commands.
 
-4. **Add ArchitectureTree view model**
-   - Blocked by: Page text and SourceSpan not strictly required.
-   - Covers: file tree vs reading tree separation.
-
-5. **Create VisualTask schema and concept-tree validation**
-   - Blocked by: current Visual Workspace prototype.
+5. **Issue #24: Define VisualTask schema and validate concept-tree submissions**
+   - Blocked by: None.
    - Covers: measurable visual interactions.
 
-6. **Add StateOverlay v1 from EvidenceEvent rules**
-   - Blocked by: EvidenceEvent command slices.
-   - Covers: state kernel foundation.
-
-7. **Add Scheduler v1 and `/next` command**
-   - Blocked by: StateOverlay v1.
-   - Covers: study plan recommendation.
-
-8. **Implement current-unit context builder**
-   - Blocked by: Page text and ReadingUnit persistence.
-   - Covers: ask, quiz, explain-selection, UnitReading.
+6. **Issue #22: Add AI provider abstraction and current-unit context builder**
+   - Blocked by: Page text extraction for useful context.
+   - Covers: provider boundary, bounded context, fake-provider tests.
 
 ## Open Planning Questions
 
