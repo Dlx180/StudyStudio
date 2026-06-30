@@ -289,7 +289,7 @@ export function PdfReaderPane({
       </label>
       <div className="reader-context-actions">
         <button type="button" onClick={onCaptureSelection}>
-          Capture sample selection
+          Use sample passage
         </button>
         {hasSelection ? (
           <div className="selection-action-bar" aria-label="Selected text actions">
@@ -308,7 +308,7 @@ export function PdfReaderPane({
             </button>
           </div>
         ) : (
-          <span>Select text directly on the PDF page or capture a sample selection</span>
+          <span>Select text directly on the PDF page or use the sample passage</span>
         )}
       </div>
       {uploadStatus === "uploading" ? <p className="form-status">Uploading PDF...</p> : null}
@@ -321,8 +321,8 @@ export function PdfReaderPane({
           <span>PDF placeholder</span>
           <strong>Page {currentPage}</strong>
           <p>
-            This pane keeps the source material primary. Upload a PDF to render the real document
-            while the UnitTree stays available for navigation.
+            Upload a PDF to render the trusted source, select a difficult passage, and run a
+            focused explain-check-next loop from the right-side dock.
           </p>
         </div>
       )}

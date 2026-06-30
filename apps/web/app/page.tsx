@@ -4,14 +4,14 @@ export default function HomePage() {
   return (
     <main className="home-shell">
       <section className="hero-card">
-        <p className="eyebrow">KnowTree MVP</p>
-        <h1>Read original material with an editable UnitTree beside it.</h1>
+        <p className="eyebrow">StudyStudio MVP</p>
+        <h1>Understand a difficult passage, check it, then choose the next step.</h1>
         <p>
-          Upload a PDF, keep the original material visible, and use the UnitTree to navigate
-          learning-sized reading units beside the document.
+          Upload a PDF, keep the original source visible, explain selected text, answer one
+          understanding check, and let StudyStudio recommend what to do next.
         </p>
         <Link className="primary-link" href="/workspace">
-          Open workspace
+          Open StudyStudio
         </Link>
       </section>
     </main>

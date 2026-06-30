@@ -1,12 +1,14 @@
 # StudyStudio
 
-StudyStudio is an interactive learning IDE.
+StudyStudio is an interactive learning IDE for active source-based study.
 
-This repository started as KnowTree, an AI knowledge-tree project. The product direction is now StudyStudio: users read trusted source material on the left, use Architecture Tree / Visual Workspace / Study Terminal tools on the right, and the system turns interactions into evidence, learning state, and next-step study plans.
-
-The first product promise is intentionally narrow:
+Its first MVP promise is intentionally narrow:
 
 > Help a learner understand one difficult source passage, verify whether they really understood it, and recommend the next learning step.
+
+The workspace keeps trusted source material on the left. The right dock contains Architecture Tree, Visual Workspace, and Study Terminal surfaces that turn deliberate learning interactions into evidence, learning state, and next-step study plans.
+
+This repository started as KnowTree, an AI knowledge-tree project. Historical KnowTree language now lives in archive docs or internal package names; StudyStudio is the current product direction.
 
 ## Current MVP Loop
 
@@ -20,7 +22,7 @@ Resource
 -> NextLearningAct
 ```
 
-The first MVP should prove this loop with PDFs. The underlying model should stay source-agnostic so later video, webpages, and other learning resources can join without redesigning the interaction model.
+The first MVP proves this loop with PDFs and selected passages. The underlying model stays source-agnostic so later video, webpages, and other learning resources can join without redesigning the interaction model.
 
 ## Canonical Docs
 

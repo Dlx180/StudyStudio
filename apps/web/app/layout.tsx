@@ -3,8 +3,8 @@ import type { ReactNode } from "react";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "KnowTree",
-  description: "AI-assisted learning material manager",
+  title: "StudyStudio",
+  description: "An interactive learning IDE for understanding, checking, and planning from source material",
 };
 
 export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {

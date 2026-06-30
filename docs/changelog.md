@@ -1,6 +1,6 @@
 # Changelog
 
-This file records notable product, architecture, documentation, and implementation changes for KnowTree.
+This file records notable product, architecture, documentation, and implementation changes for StudyStudio.
 
 The project follows an incremental development model. The first MVP is the product foundation, not a throwaway prototype. Future work should extend the existing architecture through documented proposals, migrations, prompt versions, and feature branches.
 
@@ -80,12 +80,14 @@ For AI-related changes, update or add:
 The first stable workflow is:
 
 ```text
-Upload PDF/PPT
-  -> parse resource and file structure
-  -> generate or load UnitTree
+Upload PDF
   -> read original material on the left
-  -> navigate with UnitTree on the right
-  -> ask questions or mark state for the current unit
+  -> select a difficult passage
+  -> explain the passage
+  -> answer one understanding check
+  -> save EvidenceEvent
+  -> update StateOverlay
+  -> recommend NextLearningAct
 ```
 
 New features should not break this flow.
@@ -114,6 +116,7 @@ New features should not break this flow.
 - Added a selectable PDF text layer that attaches selected source text, page number, and source type to the Interaction Console.
 - Added scroll containment for the right dock, individual dock panels, visual workspace, selected-text preview, and Console output stream.
 - Added backend `InteractionTask` and `EvidenceEvent` endpoints with local JSONL persistence, shared TypeScript types, and Console `/submit-tree` integration.
+- Added the focused StudyStudio MVP loop: selected-text actions, SourceSpan persistence, structured explanation results, terminal-based understanding checks, EvidenceEvent persistence, StateOverlay summaries, and NextLearningAct recommendations.
 
 - Added `docs/proposals/README.md` to define the proposal process, proposal template, lifecycle, and Codex usage guidance.
 - Added this changelog to record project changes and document change-management principles.
@@ -122,6 +125,7 @@ New features should not break this flow.
 
 - Clarified that future development should proceed incrementally from the MVP instead of creating a separate v2 application.
 - Clarified that proposal-level changes must be synchronized back into stable documentation after acceptance or implementation.
+- Updated user-facing copy from the old KnowTree / UnitTree-first promise to the StudyStudio explain-check-next MVP promise.
 
 ### Open
 

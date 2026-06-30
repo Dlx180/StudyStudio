@@ -57,8 +57,8 @@ export function RightDock({
   return (
     <aside className="right-dock" aria-label="Learning workbench dock">
       <DockPanel
-        title="UnitTree"
-        subtitle={`${activeUnit.title} - page ${currentPage}`}
+        title="Architecture Tree"
+        subtitle={`Reading view - ${activeUnit.title} - page ${currentPage}`}
         isOpen={unitPanelOpen}
         onToggle={onToggleUnitPanel}
       >
@@ -81,7 +81,7 @@ export function RightDock({
         />
       </DockPanel>
 
-      <DockPanel title="Study Terminal" subtitle="Conversation" isOpen={consolePanelOpen} onToggle={onToggleConsolePanel}>
+      <DockPanel title="Study Terminal" subtitle="Command transcript" isOpen={consolePanelOpen} onToggle={onToggleConsolePanel}>
         <InteractionConsole
           terminalInput={terminalInput}
           onTerminalInputChange={onTerminalInputChange}

@@ -6,7 +6,11 @@ Scope: current product direction plus MVP requirements
 
 ## 1. Product Vision
 
-StudyStudio is an interactive learning IDE.
+StudyStudio is an interactive learning IDE for active source-based study.
+
+The first product promise is:
+
+> StudyStudio helps a learner understand one difficult source passage, verifies whether they really understood it, and recommends the next learning step.
 
 Users read trusted source material on the left and work with learning tools on the right:
 
@@ -28,11 +32,7 @@ Upload PDF
 -> recommend NextLearningAct
 ```
 
-The architecture must leave room for later videos, webpages, transcripts, code repositories, and other learning resources.
-
-The first product promise is:
-
-> StudyStudio helps a learner understand one difficult source passage, verifies whether they really understood it, and recommends the next learning step.
+The MVP is deliberately PDF-first at the interaction level, but the architecture must leave room for later videos, webpages, transcripts, code repositories, and other learning resources.
 
 The first north-star metric is:
 
@@ -51,6 +51,16 @@ StudyStudio is not primarily:
 StudyStudio is:
 
 > A learning IDE where source material, structured interactions, evidence, learner state, and study planning are connected in one workspace.
+
+In the first release, this positioning should appear as a focused loop rather than a broad platform claim:
+
+```text
+select source passage
+-> explain it
+-> answer one understanding check
+-> record evidence
+-> see state and next-step guidance
+```
 
 ## 3. Target Users
 
@@ -86,6 +96,17 @@ Expected interactions:
 7. Completed interactions produce EvidenceEvents.
 8. StateOverlay updates from evidence.
 9. Scheduler recommends a NextLearningAct.
+
+For the current MVP, the required end-to-end path is narrower:
+
+```text
+select PDF text
+-> Explain this
+-> answer the understanding check in Study Terminal
+-> save EvidenceEvent
+-> update StateOverlay
+-> recommend NextLearningAct
+```
 
 ## 5. Core Concepts
 
