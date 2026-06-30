@@ -9,7 +9,7 @@ from pydantic import BaseModel, Field
 
 from .interaction_store import create_evidence_event, create_interaction_task, list_evidence_events
 from .mock_data import get_mock_workspace
-from .resource_store import ResourceError, load_resource_metadata, save_pdf_resource
+from .resource_store import ResourceError, load_resource_metadata, load_resource_pages, save_pdf_resource
 from .scheduler import recommend_next_learning_act
 from .source_span_store import SourceSpanError, create_source_span, get_source_span
 from .state_overlay import summarize_state
@@ -141,6 +141,15 @@ def get_resource(resource_id: str) -> dict:
     """Return metadata for a stored Resource."""
     try:
         return load_resource_metadata(resource_id)
+    except ResourceError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+
+
+@app.get("/api/resources/{resource_id}/pages")
+def get_resource_pages(resource_id: str) -> dict[str, list[dict]]:
+    """Return extracted Page records for a stored Resource."""
+    try:
+        return {"pages": load_resource_pages(resource_id)}
     except ResourceError as exc:
         raise HTTPException(status_code=404, detail=str(exc)) from exc
 

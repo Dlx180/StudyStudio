@@ -131,10 +131,10 @@ Goal: make real source material readable and selectable inside StudyStudio.
 - [x] Implement mouse-wheel page navigation.
 - [x] Handle upload and render errors.
 - [x] Capture selected PDF text with page/source metadata.
-- [ ] Extract page text server-side.
-- [ ] Create lightweight Page records.
+- [x] Extract page text server-side.
+- [x] Create lightweight Page records.
 - [x] Create SourceSpan records for selectable or extracted text ranges.
-- [ ] Add tests for page extraction and SourceSpan traceability.
+- [x] Add tests for page extraction and SourceSpan traceability.
 
 ### Acceptance Criteria
 
