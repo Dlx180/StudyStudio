@@ -15,7 +15,16 @@ import type {
 import { API_BASE_URL, conceptItems, SAMPLE_SELECTION, units } from "./workspace/data";
 import { PdfReaderPane } from "./workspace/pdf-reader-pane";
 import { RightDock } from "./workspace/right-dock";
-import type { ActiveVerificationTask, ConceptTreeNode, ConsoleOutput, EvidenceDraft, SelectionAction, SelectionContext, StateSummaryResult } from "./workspace/types";
+import type {
+  ActiveVerificationTask,
+  ConceptTreeNode,
+  ConsoleOutput,
+  EvidenceDraft,
+  NextLearningActResult,
+  SelectionAction,
+  SelectionContext,
+  StateSummaryResult,
+} from "./workspace/types";
 import { addConceptToTree, countTreeNodes, flattenConceptTree, flattenUnits, removeConceptFromTree } from "./workspace/tree-utils";
 import { WORKSPACE_FALLBACK_STYLES } from "./workspace/workspace-fallback-styles";
 
@@ -168,6 +177,7 @@ export function MockWorkspace() {
           "state",
           `StateOverlay: ${stateSummary.status} for ${activeVerificationTask.unit_title}. mastery ${stateSummary.mastery}, confidence ${stateSummary.confidence}, evidence ${stateSummary.evidence_count}.`,
         );
+        await recommendNextLearningAct(activeVerificationTask.unit_id);
       } catch (stateFailure) {
         addOutput("system", stateFailure instanceof Error ? `StateOverlay update failed: ${stateFailure.message}` : "StateOverlay update failed.");
       }
@@ -209,6 +219,17 @@ export function MockWorkspace() {
     }
 
     return (await response.json()) as TResponse;
+  }
+
+  async function recommendNextLearningAct(unitId = activeUnit.unitId) {
+    try {
+      const act = await getJson<NextLearningActResult>(
+        `/api/next-learning-act?session_id=${encodeURIComponent(sessionId)}&unit_id=${encodeURIComponent(unitId)}`,
+      );
+      addOutput("next", `${act.title}. ${act.reason}`);
+    } catch (nextFailure) {
+      addOutput("system", nextFailure instanceof Error ? `Next step recommendation failed: ${nextFailure.message}` : "Next step recommendation failed.");
+    }
   }
 
   function stepPage(direction: 1 | -1) {
@@ -393,8 +414,10 @@ export function MockWorkspace() {
       addOutput("quiz", selectionContext ? "Explain the selected text without looking back at the source." : "Explain the current unit in your own words.");
     } else if (trimmed.startsWith("/submit-tree")) {
       void submitTreeEvidence();
+    } else if (trimmed.startsWith("/next")) {
+      void recommendNextLearningAct();
     } else {
-      addOutput("system", `Unknown command: ${trimmed}. Try /ask, /note, /quiz, /submit-tree, or /clear.`);
+      addOutput("system", `Unknown command: ${trimmed}. Try /ask, /note, /quiz, /submit-tree, /next, or /clear.`);
     }
 
     setTerminalInput("");

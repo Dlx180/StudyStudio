@@ -10,6 +10,7 @@ from pydantic import BaseModel, Field
 from .interaction_store import create_evidence_event, create_interaction_task, list_evidence_events
 from .mock_data import get_mock_workspace
 from .resource_store import ResourceError, load_resource_metadata, save_pdf_resource
+from .scheduler import recommend_next_learning_act
 from .source_span_store import SourceSpanError, create_source_span, get_source_span
 from .state_overlay import summarize_state
 from .terminal_commands import explain_selection
@@ -181,6 +182,14 @@ def get_evidence_events(session_id: str | None = Query(default=None)) -> dict[st
 def get_state_summary(session_id: str = Query(min_length=1), unit_id: str = Query(min_length=1)) -> dict:
     """Return a conservative StateOverlay summary derived from evidence."""
     return summarize_state(list_evidence_events(session_id), unit_id)
+
+
+@app.get("/api/next-learning-act")
+def get_next_learning_act(session_id: str = Query(min_length=1), unit_id: str = Query(min_length=1)) -> dict:
+    """Return one explainable next action from state and evidence."""
+    events = list_evidence_events(session_id)
+    state_summary = summarize_state(events, unit_id)
+    return recommend_next_learning_act(events, state_summary, unit_id)
 
 
 @app.post("/api/terminal-commands/explain-selection")

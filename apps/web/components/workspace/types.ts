@@ -1,4 +1,5 @@
 import type {
+  NextLearningAct,
   ReadingUnit,
   SelectionContext as SharedSelectionContext,
   SourceSpan,
@@ -29,7 +30,7 @@ export type EvidenceDraft = {
 
 export type ConsoleOutput = {
   id: string;
-  kind: "answer" | "note" | "quiz" | "source" | "evidence" | "system" | "user" | "visual" | "state";
+  kind: "answer" | "note" | "quiz" | "source" | "evidence" | "system" | "user" | "visual" | "state" | "next";
   text: string;
   result?: TerminalCommandResult;
 };
@@ -38,6 +39,8 @@ export type StateSummaryResult = StateSummary & {
   evidence_count: number;
   latest_evidence_id?: string;
 };
+
+export type NextLearningActResult = NextLearningAct;
 
 export type SelectionContext = SharedSelectionContext;
 
