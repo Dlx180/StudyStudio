@@ -74,7 +74,7 @@ class InteractionTaskCreate(BaseModel):
 
 class EvidenceEventCreate(BaseModel):
     session_id: str = Field(min_length=1)
-    event_type: Literal["concept_tree_submission", "note_saved", "quiz_answer", "question_asked"]
+    event_type: Literal["concept_tree_submission", "note_saved", "quiz_answer", "verification_submission", "question_asked"]
     unit_id: str = Field(min_length=1)
     unit_title: str = Field(min_length=1)
     summary: str = Field(min_length=1)

@@ -1,6 +1,7 @@
 import type {
   ReadingUnit,
   SelectionContext as SharedSelectionContext,
+  SourceSpan,
   TerminalCommandResult,
   VerificationSubmissionDraft,
   VerificationTaskDraft,
@@ -39,5 +40,9 @@ export type SelectionAction = "explain" | "quiz" | "find-source" | "note";
 export type UnitSelectHandler = (unit: ReadingUnit) => void;
 
 export type ActiveVerificationTask = VerificationTaskDraft & {
+  unit_id: string;
+  unit_title: string;
+  selection_context: SelectionContext | null;
+  source_refs: SourceSpan[];
   submission?: VerificationSubmissionDraft;
 };
