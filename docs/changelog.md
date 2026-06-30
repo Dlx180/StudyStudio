@@ -119,6 +119,7 @@ New features should not break this flow.
 - Added the focused StudyStudio MVP loop: selected-text actions, SourceSpan persistence, structured explanation results, terminal-based understanding checks, EvidenceEvent persistence, StateOverlay summaries, and NextLearningAct recommendations.
 - Added `docs/second_batch_plan.md` to record the next collaborative issue batch after the first MVP loop.
 - Added PDF Page records with extracted page text and a resource pages API for source lookup and future AI context builders.
+- Added a backend `/ask` terminal command path with bounded current-unit context and a fake-by-default AI provider boundary, with optional DeepSeek configuration through environment variables.
 
 - Added `docs/proposals/README.md` to define the proposal process, proposal template, lifecycle, and Codex usage guidance.
 - Added this changelog to record project changes and document change-management principles.

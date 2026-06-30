@@ -261,8 +261,8 @@ Goal: generate real learning structure and answers from scoped source context.
 
 - [ ] Define UnitReading request/response schema.
 - [ ] Create prompt v1 for UnitReading.
-- [ ] Implement AI provider abstraction.
-- [ ] Implement current-unit context builder.
+- [x] Implement AI provider abstraction.
+- [x] Implement current-unit context builder.
 - [ ] Implement `/unit-reading` endpoint or job.
 - [ ] Validate AI JSON output.
 - [ ] Persist generated UnitTree and ReadingUnits.

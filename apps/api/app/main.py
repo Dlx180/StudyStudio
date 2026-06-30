@@ -13,7 +13,7 @@ from .resource_store import ResourceError, load_resource_metadata, load_resource
 from .scheduler import recommend_next_learning_act
 from .source_span_store import SourceSpanError, create_source_span, get_source_span
 from .state_overlay import summarize_state
-from .terminal_commands import explain_selection
+from .terminal_commands import ask_question, explain_selection
 
 app = FastAPI(
     title="KnowTree API",
@@ -91,6 +91,16 @@ class ExplainSelectionCreate(BaseModel):
     unit_id: str = Field(min_length=1)
     unit_title: str = Field(min_length=1)
     selection_context: SelectionContextPayload
+    source_refs: list[SourceSpanRefPayload] = Field(default_factory=list)
+
+
+class AskQuestionCreate(BaseModel):
+    session_id: str = Field(min_length=1)
+    unit_id: str = Field(min_length=1)
+    unit_title: str = Field(min_length=1)
+    question: str = Field(min_length=1)
+    current_page: int | None = Field(default=None, ge=1)
+    resource: ResourceRefPayload | None = None
     source_refs: list[SourceSpanRefPayload] = Field(default_factory=list)
 
 
@@ -205,3 +215,9 @@ def get_next_learning_act(session_id: str = Query(min_length=1), unit_id: str = 
 def post_explain_selection(command: ExplainSelectionCreate) -> dict:
     """Explain selected source text and return a structured terminal result."""
     return explain_selection(command.model_dump(exclude_none=True))
+
+
+@app.post("/api/terminal-commands/ask")
+def post_ask_question(command: AskQuestionCreate) -> dict:
+    """Answer a learner question from bounded StudyStudio context."""
+    return ask_question(command.model_dump(exclude_none=True))

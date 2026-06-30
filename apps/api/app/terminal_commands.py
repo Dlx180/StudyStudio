@@ -7,6 +7,9 @@ import uuid
 from datetime import UTC, datetime
 from typing import Any
 
+from .ai_provider import AIProviderError, get_ai_provider
+from .context_builder import build_current_unit_context
+
 
 def _utc_now() -> str:
     return datetime.now(UTC).isoformat()
@@ -93,4 +96,39 @@ def explain_selection(payload: dict[str, Any]) -> dict[str, Any]:
                 "payload": {"verification_task": verification_task},
             }
         ],
+    }
+
+
+def ask_question(payload: dict[str, Any]) -> dict[str, Any]:
+    """Answer a learner question from bounded StudyStudio context."""
+    question = _compact_whitespace(payload["question"])
+    context, warnings = build_current_unit_context(payload)
+    try:
+        provider = get_ai_provider()
+        answer = provider.answer_question(question=question, context=context)
+    except AIProviderError as exc:
+        answer = f"StudyStudio could not get an AI answer: {exc}"
+        provider_name = locals().get("provider").name if "provider" in locals() else "unavailable"
+        failed = True
+    else:
+        provider_name = provider.name
+        failed = False
+
+    return {
+        "result_id": f"terminal-result-{uuid.uuid4().hex}",
+        "kind": "answer" if not failed else "system",
+        "title": "Ask StudyStudio",
+        "message": answer,
+        "source_refs": payload.get("source_refs") or [],
+        "payload": {
+            "command": "ask",
+            "question": question,
+            "answer": answer,
+            "provider": provider_name,
+            "context": context,
+            "context_warnings": warnings,
+            "mocked": provider_name == "fake",
+            "created_at": _utc_now(),
+        },
+        "follow_up_actions": [],
     }
