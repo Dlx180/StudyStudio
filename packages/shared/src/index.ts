@@ -292,6 +292,7 @@ export type EvidenceEventType =
   | "concept_tree_submission"
   | "note_saved"
   | "quiz_answer"
+  | "verification_submission"
   | "question_asked"
   | "source_match_submission"
   | "explanation_submission"

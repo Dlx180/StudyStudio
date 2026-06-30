@@ -70,15 +70,21 @@ export function MockWorkspace() {
       return;
     }
 
-    const selectedText = typeof result.payload.selection_context === "object" && result.payload.selection_context !== null && "text" in result.payload.selection_context
-      ? String(result.payload.selection_context.text)
-      : selectionContext?.text ?? "";
+    const payloadSelectionContext =
+      typeof result.payload.selection_context === "object" && result.payload.selection_context !== null && "text" in result.payload.selection_context
+        ? (result.payload.selection_context as SelectionContext)
+        : selectionContext;
+    const selectedText = payloadSelectionContext?.text ?? "";
 
     const task: ActiveVerificationTask = {
       ...verificationTask,
       task_id: `verification-task-${Date.now()}`,
       selected_text: selectedText,
       created_from_result_id: result.result_id,
+      unit_id: activeUnit.unitId,
+      unit_title: activeUnit.title,
+      selection_context: payloadSelectionContext,
+      source_refs: result.source_refs,
     };
 
     setActiveVerificationTask(task);
@@ -87,7 +93,7 @@ export function MockWorkspace() {
     }
   }
 
-  function submitVerificationTask() {
+  async function submitVerificationTask() {
     if (!activeVerificationTask) return;
 
     const responseText = terminalInput.trim();
@@ -114,9 +120,51 @@ export function MockWorkspace() {
       },
     };
 
-    setActiveVerificationTask({ ...activeVerificationTask, submission });
-    setTerminalInput("");
-    addOutput("evidence", `Verification submission ready for EvidenceEvent: ${submission.submission_id}.\n${JSON.stringify(submission.payload, null, 2)}`);
+    try {
+      const task = await postJson<InteractionTask>("/api/interaction-tasks", {
+        session_id: sessionId,
+        task_type: "quiz",
+        unit_id: activeVerificationTask.unit_id,
+        unit_title: activeVerificationTask.unit_title,
+        prompt: activeVerificationTask.prompt,
+        context: {
+          page: activeVerificationTask.page,
+          selection_context: activeVerificationTask.selection_context,
+          source_refs: activeVerificationTask.source_refs,
+          source_excerpt: activeVerificationTask.source_excerpt,
+          verification_task_id: activeVerificationTask.task_id,
+          created_from_result_id: activeVerificationTask.created_from_result_id,
+        },
+      });
+
+      const event = await postJson<EvidenceEvent>("/api/evidence-events", {
+        session_id: sessionId,
+        task_id: task.task_id,
+        event_type: "verification_submission",
+        unit_id: activeVerificationTask.unit_id,
+        unit_title: activeVerificationTask.unit_title,
+        summary: `Saved understanding-check response for ${activeVerificationTask.unit_title}, page ${activeVerificationTask.page}.`,
+        selection_context: activeVerificationTask.selection_context,
+        source_refs: activeVerificationTask.source_refs,
+        payload: {
+          ...submission.payload,
+          submission_id: submission.submission_id,
+          verification_task_id: activeVerificationTask.task_id,
+          created_from_result_id: activeVerificationTask.created_from_result_id,
+          unit_id: activeVerificationTask.unit_id,
+          unit_title: activeVerificationTask.unit_title,
+        },
+      });
+
+      setActiveVerificationTask({ ...activeVerificationTask, submission });
+      setTerminalInput("");
+      addOutput("evidence", `verification_submission: saved ${event.event_id} for ${task.task_id}. Response linked to page ${activeVerificationTask.page}.`);
+    } catch (submitFailure) {
+      addOutput(
+        "system",
+        submitFailure instanceof Error ? `Verification evidence save failed: ${submitFailure.message}` : "Verification evidence save failed.",
+      );
+    }
   }
 
   function clearTerminal() {
@@ -298,7 +346,7 @@ export function MockWorkspace() {
 
   function runCommand() {
     if (activeVerificationTask && !activeVerificationTask.submission) {
-      submitVerificationTask();
+      void submitVerificationTask();
       return;
     }
 
